@@ -14,32 +14,22 @@ public class PetsController {
     private PetsService petsService;
 
     @PostMapping("/create")
-    public Pet create(@RequestParam int ownerId) {
+    public @ResponseBody Pet create(@RequestParam int ownerId) {
         return petsService.create(ownerId);
     }
 
     @GetMapping("/of-owner")
-    public Result<Pet> findByOwnerId(@RequestParam int ownerId) {
-        Result<Pet> pet = petsService.findByOwnerId(ownerId);
-        if (pet.isSuccess()) {
-            return Result.success(pet.getData());
-        } else {
-            return Result.failure(pet.getError());
-        }
+    public @ResponseBody Result<Pet> findByOwnerId(@RequestParam int ownerId) {
+        return petsService.findByOwnerId(ownerId);
     }
 
     @PatchMapping("/rename")
-    public Result<String> changeName(@RequestParam int petId, @RequestParam String newName) {
-        Result<String> name = petsService.changeName(petId, newName);
-        if (name.isSuccess()) {
-            return Result.success(name.getData());
-        } else {
-            return Result.failure(name.getError());
-        }
+    public @ResponseBody Result<String> changeName(@RequestParam int petId, @RequestParam String newName) {
+        return petsService.changeName(petId, newName);
     }
 
     @PatchMapping("/save")
-    public Result<Pet> save(@RequestParam int petId,
+    public @ResponseBody Result<Pet> save(@RequestParam int petId,
                             @RequestParam int currentHunger,
                             @RequestParam int currentHappiness,
                             @RequestParam int currentCleanness) {

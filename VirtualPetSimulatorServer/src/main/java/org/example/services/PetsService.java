@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 public class PetsService {
     @Autowired
     private PetsRepository petsRepository;
+    @Autowired
+    private UsersService usersService;
 
     public Pet create(int ownerId) {
         Pet pet = new Pet(ownerId);
@@ -32,7 +34,6 @@ public class PetsService {
             return Result.failure("PetNotFound");
         }
         int scoreDecrease = pet.applyStatsDecrease(getStatsDifference(pet));
-        UsersService usersService = new UsersService();
         usersService.updateScore(pet.getOwnerId(), -scoreDecrease);
         return Result.success(pet);
     }
@@ -74,7 +75,6 @@ public class PetsService {
         scoreDifference += Math.max(0, currentHappiness - pet.getHappiness());
         scoreDifference += Math.max(0, currentCleanness - pet.getCleanness());
 
-        UsersService usersService = new UsersService();
         usersService.updateScore(pet.getOwnerId(), scoreDifference);
         usersService.updateCurrency(pet.getOwnerId(), scoreDifference / 10);
 
