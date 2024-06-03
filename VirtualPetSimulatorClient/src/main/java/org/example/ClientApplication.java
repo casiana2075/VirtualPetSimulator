@@ -3,18 +3,19 @@ package org.example;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -60,6 +61,14 @@ public class ClientApplication extends Application {
         fishImageView.setTranslateY(-10);
         soapImageView.setTranslateX(50);
         soapImageView.setTranslateY(-15);
+
+        // top labels box
+        Label coinsLabel = new Label("Coins: 100$");
+        Label nameLabel = new Label("Name: Pisu");
+        Label scoreLabel = new Label("Score: 1425");
+        coinsLabel.setFont(new Font(25));
+        nameLabel.setFont(new Font(25));
+        scoreLabel.setFont(new Font(25));
 
         //Left button box
         Image feedImage = new Image(getClass().getResourceAsStream("/Buttons/feedBttn.png"));
@@ -136,6 +145,9 @@ public class ClientApplication extends Application {
             exitImageView.setFitWidth(150);
             exitImageView.setFitHeight(150);
         });
+        exitButton.setOnAction(event -> {
+            Platform.exit();
+        });
 
         logoutButton.setOnMouseEntered(event -> {
             logoutImageView.setFitWidth(170);
@@ -167,25 +179,74 @@ public class ClientApplication extends Application {
         });
 
         // Center Cat Box
-        Image catImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailDown.png"));
-        ImageView catImageView = new ImageView(catImage);
+        Image catTailUpImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailUp.png"));
+        Image catTailDownImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailDown.png"));
+        ImageView catImageView = new ImageView(catTailUpImage);
         catImageView.setFitWidth(550);
         catImageView.setFitHeight(550);
 
-        // Create box and add the button to it
+        //login fields
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        Button loginButton = new Button("Login");
+        loginButton.setOnAction(event -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            // login verification code here
+        });
+
+        // Create a login box and add the login fields to it
+        VBox loginBox = new VBox();
+        usernameField.setMaxWidth(300);
+        passwordField.setMaxWidth(300);
+        loginBox.getChildren().addAll(usernameField, passwordField, loginButton);
+        loginBox.setAlignment(Pos.CENTER);
+        loginBox.setSpacing(20);
+        loginBox.setStyle("-fx-background-color: #A9A9A9;");
+        //scene for login
+        Scene loginScene = new Scene(loginBox, 1200, 800);
+        //action of button
+        logoutButton.setOnAction(event -> {
+            primaryStage.setScene(loginScene);
+            primaryStage.setTitle("Welcome to Virtual Pet Simulator! Please Login...");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
+
+        });
+
+        // Create a top box and add the progress bars to it
+        HBox topStateBarBox = new HBox();
+        topStateBarBox.getChildren().addAll(heartImageView, lifeBar, fishImageView, foodBar,soapImageView, cleanBar);
+        topStateBarBox.setAlignment(Pos.TOP_CENTER);
+        topStateBarBox.setSpacing(50);
+        topStateBarBox.setPadding(new Insets(30, 0, 0, 0));
+        topStateBarBox.setStyle("-fx-background-color: #A9A9A9;");
+
+        // Create a top box and add the labels to it
+        HBox userInfoBox = new HBox();
+        userInfoBox.getChildren().addAll(coinsLabel, nameLabel, scoreLabel);
+        userInfoBox.setAlignment(Pos.CENTER);
+        userInfoBox.setSpacing(300);
+        userInfoBox.setPadding(new Insets(10, 0, 0, 0));
+        userInfoBox.setStyle("-fx-background-color: #A9A9A9;");
+
+        // Create center box and add the cat image to it
         VBox centerCatBox = new VBox();
         centerCatBox.getChildren().addAll(shopButton);
         centerCatBox.setAlignment(Pos.CENTER);
         centerCatBox.setStyle("-fx-background-color: #A9A9A9;");
         centerCatBox.getChildren().add(catImageView);
 
-        // Create box and add the button to it
+        // Create bottom box and add the button to it
         VBox bottomButtonBox = new VBox();
         bottomButtonBox.getChildren().addAll(shopButton);
         bottomButtonBox.setAlignment(Pos.CENTER);
         bottomButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
-        // Create box and add the buttons to it
+        // Create right box and add the buttons to it
         VBox rightButtonBox = new VBox();
         rightButtonBox.getChildren().addAll(logoutButton, exitButton);
         rightButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
@@ -197,16 +258,87 @@ public class ClientApplication extends Application {
         leftButtonBox.setAlignment(Pos.BOTTOM_LEFT);
         leftButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
-        // Create a horizontal box and add the progress bars to it
-        HBox topStateBarBox = new HBox();
-        topStateBarBox.getChildren().addAll(heartImageView, lifeBar, fishImageView, foodBar,soapImageView, cleanBar);
-        topStateBarBox.setAlignment(Pos.TOP_CENTER);
-        topStateBarBox.setSpacing(50);
-        topStateBarBox.setPadding(new Insets(30, 0, 0, 0));
-        topStateBarBox.setStyle("-fx-background-color: #A9A9A9;");
+        //a timeline for default cat animation
+        Timeline catAnimation = new Timeline(
+                new KeyFrame(Duration.seconds(1.0), event -> catImageView.setImage(catTailUpImage)),
+                new KeyFrame(Duration.seconds(1.5), event -> catImageView.setImage(catTailDownImage))
+        );
+        catAnimation.setCycleCount(Timeline.INDEFINITE);
+        catAnimation.play();
+
+        //feed animation
+        Image catEating1Image = new Image(getClass().getResourceAsStream("/CatAnimations/catEating1.png"));
+        Image catEating2Image = new Image(getClass().getResourceAsStream("/CatAnimations/catEating2.png"));
+        Timeline catEatingAnimation = new Timeline(
+                new KeyFrame(Duration.seconds(0.7), event -> catImageView.setImage(catEating1Image)),
+                new KeyFrame(Duration.seconds(1.0), event -> catImageView.setImage(catEating2Image))
+        );
+        catEatingAnimation.setCycleCount(5);
+        feedButton.setOnAction(event -> {
+            catAnimation.pause();
+            catEatingAnimation.play();
+            if (foodBar.getProgress() < 1.0) {
+                foodBar.setProgress(foodBar.getProgress() + 0.3);
+            }
+        });
+        catEatingAnimation.setOnFinished(event -> {
+            catAnimation.play();
+        });
+
+        //wash animation
+        Image catBath1Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath1.png"));
+        Image catBath2Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath2.png"));
+        Image catBath3Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath3.png"));
+        Image catBath4Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath3.1.png"));
+        Timeline catWashAnimation = new Timeline(
+                new KeyFrame(Duration.seconds(0.0), event -> catImageView.setImage(catBath1Image)),
+                new KeyFrame(Duration.seconds(0.5), event -> catImageView.setImage(catBath2Image)),
+                new KeyFrame(Duration.seconds(1.5), event -> catImageView.setImage(catBath3Image)),
+                new KeyFrame(Duration.seconds(2.5), event -> catImageView.setImage(catBath4Image))
+        );
+        catWashAnimation.setCycleCount(3);
+        washButton.setOnAction(event -> {
+            catAnimation.pause();
+            catWashAnimation.play();
+            if (cleanBar.getProgress() < 1.0) {
+                cleanBar.setProgress(cleanBar.getProgress() + 0.3);
+            }
+        });
+        catWashAnimation.setOnFinished(event -> {
+            catAnimation.play();
+        });
+
+        //play animation
+        Image catPlay1Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying1.png"));
+        Image catPlay2Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying2.png"));
+        Image catPlay3Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying3.png"));
+        Image catPlay4Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying4.png"));
+        Timeline catPlayAnimation = new Timeline(
+                new KeyFrame(Duration.seconds(0.0), event -> catImageView.setImage(catPlay1Image)),
+                new KeyFrame(Duration.seconds(1.0), event -> catImageView.setImage(catPlay2Image)),
+                new KeyFrame(Duration.seconds(2.0), event -> catImageView.setImage(catPlay3Image)),
+                new KeyFrame(Duration.seconds(2.5), event -> catImageView.setImage(catPlay4Image)),
+                new KeyFrame(Duration.seconds(3.0), event -> catImageView.setImage(catPlay3Image)),
+                new KeyFrame(Duration.seconds(3.5), event -> catImageView.setImage(catPlay4Image)),
+                new KeyFrame(Duration.seconds(4.0), event -> catImageView.setImage(catPlay3Image)),
+                new KeyFrame(Duration.seconds(4.5), event -> catImageView.setImage(catPlay4Image)),
+                new KeyFrame(Duration.seconds(5.0), event -> catImageView.setImage(catPlay3Image)),
+                new KeyFrame(Duration.seconds(5.5), event -> catImageView.setImage(catPlay4Image))
+        );
+        catPlayAnimation.setCycleCount(1);
+        playButton.setOnAction(event -> {
+            catAnimation.pause();
+            catPlayAnimation.play();
+            if (lifeBar.getProgress() < 1.0) {
+                lifeBar.setProgress(lifeBar.getProgress() + 0.3);
+            }
+        });
+        catPlayAnimation.setOnFinished(event -> {
+            catAnimation.play();
+        });
 
         //a timeline that decreases the progress value over time
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(4), event -> {
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
             if (lifeBar.getProgress() > 0) {
                 lifeBar.setProgress(lifeBar.getProgress() - 0.1);
             }
@@ -223,14 +355,15 @@ public class ClientApplication extends Application {
         // Create a BorderPane and add the buttonBoxes and stateBarBox to it
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(topStateBarBox);
+        borderPane.setTop(new VBox(topStateBarBox, userInfoBox));
         borderPane.setLeft(leftButtonBox);
         borderPane.setRight(rightButtonBox);
         borderPane.setBottom(bottomButtonBox);
         borderPane.setCenter(centerCatBox);
 
         // Create a scene with the borderPane as root
-        Scene scene = new Scene(borderPane, 1200, 800);
-        primaryStage.setScene(scene);
+        Scene gameScene = new Scene(borderPane, 1200, 800);
+        primaryStage.setScene(gameScene);
         primaryStage.setTitle("Virtual Pet Game");
         primaryStage.setResizable(false);
         primaryStage.setMaximized(false);
