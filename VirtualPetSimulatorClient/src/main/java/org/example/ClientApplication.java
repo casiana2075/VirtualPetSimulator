@@ -19,11 +19,17 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.InputStream;
+
 public class ClientApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
         ProgressBar lifeBar = new ProgressBar();
         ProgressBar foodBar = new ProgressBar();
         ProgressBar cleanBar = new ProgressBar();
+
+        int coins = 100; // PLACEHOLDER for api coins
+        int score = 1425; // PLACEHOLDER for api score
+        String petName = "Pisu"; // PLACEHOLDER for api petName
 
         lifeBar.setProgress(1.0);
         foodBar.setProgress(1.0);
@@ -62,15 +68,17 @@ public class ClientApplication extends Application {
         soapImageView.setTranslateX(50);
         soapImageView.setTranslateY(-15);
 
-        // top labels box
-        Label coinsLabel = new Label("Coins: 100$");
-        Label nameLabel = new Label("Name: Pisu");
-        Label scoreLabel = new Label("Score: 1425");
-        coinsLabel.setFont(new Font(25));
-        nameLabel.setFont(new Font(25));
-        scoreLabel.setFont(new Font(25));
+        // Top labels box
+        Label coinsLabel = new Label("Coins: " + coins + "$");
+        Label nameLabel = new Label("Name: " + petName);
+        Label scoreLabel = new Label("Score: " + score);
+        InputStream is = getClass().getResourceAsStream("/Fonts/PixelatedFont.ttf");
+        Font pixelatedFont = Font.loadFont(is, 20);
+        coinsLabel.setFont(pixelatedFont);
+        nameLabel.setFont(pixelatedFont);
+        scoreLabel.setFont(pixelatedFont);
 
-        //Left button box
+        // Left button box
         Image feedImage = new Image(getClass().getResourceAsStream("/Buttons/feedBttn.png"));
         ImageView feedImageView = new ImageView(feedImage);
         Image washImage = new Image(getClass().getResourceAsStream("/Buttons/washBttn.png"));
@@ -158,26 +166,6 @@ public class ClientApplication extends Application {
             logoutImageView.setFitHeight(150);
         });
 
-        // Bottom button box
-        Image shopImage = new Image(getClass().getResourceAsStream("/Buttons/shopBttn.png"));
-        ImageView shopImageView = new ImageView(shopImage);
-
-        shopImageView.setFitWidth(150);
-        shopImageView.setFitHeight(150);
-
-        Button shopButton = new Button("", shopImageView);
-
-        shopButton.setStyle("-fx-background-color: transparent;");
-
-        shopButton.setOnMouseEntered(event -> {
-            shopImageView.setFitWidth(170);
-            shopImageView.setFitHeight(170);
-        });
-        shopButton.setOnMouseExited(event -> {
-            shopImageView.setFitWidth(150);
-            shopImageView.setFitHeight(150);
-        });
-
         // Center Cat Box
         Image catTailUpImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailUp.png"));
         Image catTailDownImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailDown.png"));
@@ -186,35 +174,144 @@ public class ClientApplication extends Application {
         catImageView.setFitHeight(550);
 
         //login fields
-        TextField usernameField = new TextField();
-        usernameField.setPromptText("Username");
-        PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
+        Label loginTitleLabel = new Label("Please login to see your beloved pet!");
+        loginTitleLabel.setFont(pixelatedFont);
+        TextField loginUsernameField = new TextField();
+        loginUsernameField.setPromptText("Username");
+        loginUsernameField.setFont(pixelatedFont);
+        PasswordField loginPasswordField = new PasswordField();
+        loginPasswordField.setPromptText("Password");
+        loginPasswordField.setFont(pixelatedFont);
         Button loginButton = new Button("Login");
+        loginButton.setFont(pixelatedFont);
+        Button homeButton = new Button("Home");
+        homeButton.setFont(pixelatedFont);
+        Label promptLabel = new Label("...or you don't have an account? ");
+        promptLabel.setFont(pixelatedFont);
+        Hyperlink registerLink = new Hyperlink("Register here");
+        registerLink.setFont(pixelatedFont);
+        HBox loginPromptBox = new HBox();
+        loginPromptBox.getChildren().addAll(promptLabel, registerLink);
+        loginPromptBox.setAlignment(Pos.CENTER);
+
         loginButton.setOnAction(event -> {
-            String username = usernameField.getText();
-            String password = passwordField.getText();
+            String username = loginUsernameField.getText();
+            String password = loginPasswordField.getText();
             // login verification code here
         });
 
-        // Create a login box and add the login fields to it
+        //register fields
+        Label registerTitleLabel = new Label("Create an account to have a lovely pet!");
+        registerTitleLabel.setFont(pixelatedFont);
+        TextField registerUsernameField = new TextField();
+        registerUsernameField.setPromptText("Username");
+        registerUsernameField.setFont(pixelatedFont);
+        PasswordField registerPasswordField = new PasswordField();
+        registerPasswordField.setPromptText("Create a password");
+        registerPasswordField.setFont(pixelatedFont);
+        TextField registerPetNameField = new TextField();
+        registerPetNameField.setPromptText("Your Pet Name");
+        registerPetNameField.setFont(pixelatedFont);
+        TextField registerEmailField = new TextField();
+        registerEmailField.setPromptText("Email Address");
+        registerEmailField.setFont(pixelatedFont);
+        Button registerButton = new Button("Register");
+        registerButton.setFont(pixelatedFont);
+        Label registerPromptLabel = new Label("...or you already have an account? ");
+        registerPromptLabel.setFont(pixelatedFont);
+        Hyperlink loginLink = new Hyperlink("Login here");
+        loginLink.setFont(pixelatedFont);
+        HBox registerPromptBox = new HBox();
+        registerPromptBox.getChildren().addAll(registerPromptLabel, loginLink);
+        registerPromptBox.setAlignment(Pos.CENTER);
+        VBox registerBox = new VBox();
+        registerUsernameField.setMaxWidth(300);
+        registerPasswordField.setMaxWidth(300);
+        registerPetNameField.setMaxWidth(300);
+        registerEmailField.setMaxWidth(300);
+        registerBox.getChildren().addAll(registerTitleLabel, registerUsernameField, registerPasswordField, registerPetNameField, registerEmailField, registerPromptBox, registerButton, homeButton);
+        registerBox.setAlignment(Pos.CENTER);
+        registerBox.setSpacing(20);
+        registerBox.setStyle("-fx-background-color: #A9A9A9;");
+        //scene for register
+        Scene registerScene = new Scene(registerBox, 1200, 800);
+        //action of register here link
+        registerLink.setOnAction(event -> {
+            primaryStage.setScene(registerScene);
+            primaryStage.setTitle("Welcome to Virtual Pet Simulator! Please Create An Account...");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
+        });
+
+        // Create a login box/scene and add the login fields to it
         VBox loginBox = new VBox();
-        usernameField.setMaxWidth(300);
-        passwordField.setMaxWidth(300);
-        loginBox.getChildren().addAll(usernameField, passwordField, loginButton);
+        loginUsernameField.setMaxWidth(300);
+        loginPasswordField.setMaxWidth(300);
+        loginBox.getChildren().addAll(loginTitleLabel,loginUsernameField, loginPasswordField, loginPromptBox, loginButton, homeButton);
         loginBox.setAlignment(Pos.CENTER);
         loginBox.setSpacing(20);
         loginBox.setStyle("-fx-background-color: #A9A9A9;");
-        //scene for login
-        Scene loginScene = new Scene(loginBox, 1200, 800);
-        //action of button
-        logoutButton.setOnAction(event -> {
+        Scene loginScene = new Scene(loginBox, 1200, 800);//scene for login
+        logoutButton.setOnAction(event -> {//action of logout button
             primaryStage.setScene(loginScene);
             primaryStage.setTitle("Welcome to Virtual Pet Simulator! Please Login...");
             primaryStage.setResizable(false);
             primaryStage.setMaximized(false);
             primaryStage.show();
+        });
+        //action of login here link
+        loginLink.setOnAction(event1 -> {
+            primaryStage.setScene(loginScene);
+            primaryStage.setTitle("Back to Previous Page");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
+        });
 
+        // Create a new scene for the home page
+        Image toLoginImage = new Image(getClass().getResourceAsStream("/Buttons/loginBttn.png"));
+        ImageView toLoginImageView = new ImageView(toLoginImage);
+        toLoginImageView.setFitWidth(150);
+        toLoginImageView.setFitHeight(150);
+        Button toLoginButton = new Button("", toLoginImageView);
+        toLoginButton.setStyle("-fx-background-color: transparent;");
+        toLoginButton.setOnAction(event -> {
+            primaryStage.setScene(loginScene);
+            primaryStage.setTitle("Login");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
+        });
+
+        Image toRegisterImage = new Image(getClass().getResourceAsStream("/Buttons/createAccBttn.png"));
+        ImageView toRegisterImageView = new ImageView(toRegisterImage);
+        toRegisterImageView.setFitWidth(250);
+        toRegisterImageView.setFitHeight(150);
+        Button toRegisterButton = new Button("", toRegisterImageView);
+        toRegisterButton.setStyle("-fx-background-color: transparent;");
+        toRegisterButton.setOnAction(event -> {
+            primaryStage.setScene(registerScene);
+            primaryStage.setTitle("Create Account");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
+        });
+        HBox homeBox = new HBox();
+        homeBox.setAlignment(Pos.CENTER);
+        homeBox.setSpacing(20);
+        homeBox.setStyle("-fx-background-image: url('/Items/gameCover.png'); -fx-background-size: cover; -fx-background-position: center center;");
+        HBox homeButtonBox = new HBox();
+        homeButtonBox.getChildren().addAll(toLoginButton, toRegisterButton);
+        homeButtonBox.setTranslateY(500);
+        homeBox.getChildren().add(homeButtonBox);
+        Scene homeScene = new Scene(homeBox, 1200, 800); // scene for home
+        homeButton.setOnAction(event -> { // action of home button
+            primaryStage.setScene(homeScene);
+            primaryStage.setTitle("Home");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
         });
 
         // Create a top box and add the progress bars to it
@@ -235,16 +332,9 @@ public class ClientApplication extends Application {
 
         // Create center box and add the cat image to it
         VBox centerCatBox = new VBox();
-        centerCatBox.getChildren().addAll(shopButton);
         centerCatBox.setAlignment(Pos.CENTER);
         centerCatBox.setStyle("-fx-background-color: #A9A9A9;");
         centerCatBox.getChildren().add(catImageView);
-
-        // Create bottom box and add the button to it
-        VBox bottomButtonBox = new VBox();
-        bottomButtonBox.getChildren().addAll(shopButton);
-        bottomButtonBox.setAlignment(Pos.CENTER);
-        bottomButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
         // Create right box and add the buttons to it
         VBox rightButtonBox = new VBox();
@@ -252,7 +342,7 @@ public class ClientApplication extends Application {
         rightButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
         rightButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
-        //Create a vertical box and add the buttons to it
+        //Create a left box and add the buttons to it
         VBox leftButtonBox = new VBox();
         leftButtonBox.getChildren().addAll(feedButton, washButton, playButton);
         leftButtonBox.setAlignment(Pos.BOTTOM_LEFT);
@@ -275,6 +365,8 @@ public class ClientApplication extends Application {
         );
         catEatingAnimation.setCycleCount(5);
         feedButton.setOnAction(event -> {
+            washButton.setDisable(true);
+            playButton.setDisable(true);
             catAnimation.pause();
             catEatingAnimation.play();
             if (foodBar.getProgress() < 1.0) {
@@ -283,6 +375,8 @@ public class ClientApplication extends Application {
         });
         catEatingAnimation.setOnFinished(event -> {
             catAnimation.play();
+            washButton.setDisable(false);
+            playButton.setDisable(false);
         });
 
         //wash animation
@@ -298,6 +392,8 @@ public class ClientApplication extends Application {
         );
         catWashAnimation.setCycleCount(3);
         washButton.setOnAction(event -> {
+            feedButton.setDisable(true);
+            playButton.setDisable(true);
             catAnimation.pause();
             catWashAnimation.play();
             if (cleanBar.getProgress() < 1.0) {
@@ -306,6 +402,8 @@ public class ClientApplication extends Application {
         });
         catWashAnimation.setOnFinished(event -> {
             catAnimation.play();
+            feedButton.setDisable(false);
+            playButton.setDisable(false);
         });
 
         //play animation
@@ -327,6 +425,8 @@ public class ClientApplication extends Application {
         );
         catPlayAnimation.setCycleCount(1);
         playButton.setOnAction(event -> {
+            feedButton.setDisable(true);
+            washButton.setDisable(true);
             catAnimation.pause();
             catPlayAnimation.play();
             if (lifeBar.getProgress() < 1.0) {
@@ -335,6 +435,8 @@ public class ClientApplication extends Application {
         });
         catPlayAnimation.setOnFinished(event -> {
             catAnimation.play();
+            feedButton.setDisable(false);
+            washButton.setDisable(false);
         });
 
         //a timeline that decreases the progress value over time
@@ -352,17 +454,16 @@ public class ClientApplication extends Application {
         timeline.setCycleCount(Timeline.INDEFINITE);
         timeline.play();
 
-        // Create a BorderPane and add the buttonBoxes and stateBarBox to it
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(topStateBarBox);
-        borderPane.setTop(new VBox(topStateBarBox, userInfoBox));
-        borderPane.setLeft(leftButtonBox);
-        borderPane.setRight(rightButtonBox);
-        borderPane.setBottom(bottomButtonBox);
-        borderPane.setCenter(centerCatBox);
+        // Create a BorderPaneGame and add the buttonBoxes and stateBarBox to it
+        BorderPane borderPaneGame = new BorderPane();
+        borderPaneGame.setTop(topStateBarBox);
+        borderPaneGame.setTop(new VBox(topStateBarBox, userInfoBox));
+        borderPaneGame.setLeft(leftButtonBox);
+        borderPaneGame.setRight(rightButtonBox);
+        borderPaneGame.setCenter(centerCatBox);
 
         // Create a scene with the borderPane as root
-        Scene gameScene = new Scene(borderPane, 1200, 800);
+        Scene gameScene = new Scene(borderPaneGame, 1200, 800);
         primaryStage.setScene(gameScene);
         primaryStage.setTitle("Virtual Pet Game");
         primaryStage.setResizable(false);
@@ -394,3 +495,7 @@ public class ClientApplication extends Application {
         }
     }
 }
+
+//when running the app I want the app to start from a stage where I
+// have two buttons called login(loginBttn) and create account(createAccBttn) and a title
+// "Virtual Pet Simulator" which is an image called gameCover in resources/Items
