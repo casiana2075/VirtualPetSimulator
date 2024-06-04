@@ -31,9 +31,9 @@ public class Pet {
     @Column(name = "cleanness", nullable = false)
     private Integer cleanness;
 
-    public Pet(Integer ownerId) {
+    public Pet(Integer ownerId, String name) {
         this.ownerId = ownerId;
-        this.name = "Your pet";
+        this.name = name;
         this.lastUpdate = LocalDateTime.now();
         this.hunger = 50;
         this.happiness = 50;

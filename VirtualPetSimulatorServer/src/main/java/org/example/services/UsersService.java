@@ -41,13 +41,4 @@ public class UsersService {
         user.setScore(user.getScore() + score);
         return usersRepository.save(user);
     }
-
-    public User updateCurrency(int userId, int currency) {
-        User user = usersRepository.findById(userId).orElse(null);
-        if (user == null) {
-            return null;
-        }
-        user.setCurrency(user.getCurrency() + currency);
-        return usersRepository.save(user);
-    }
 }

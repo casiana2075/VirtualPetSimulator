@@ -23,14 +23,10 @@ public class User {
     @Column(name = "score", nullable = false)
     private Integer score;
 
-    @Column(name = "currency", nullable = false)
-    private Integer currency;
-
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
         this.score = 0;
-        this.currency = 0;
     }
 }

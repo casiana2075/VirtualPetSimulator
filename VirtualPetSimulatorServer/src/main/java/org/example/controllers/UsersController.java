@@ -18,8 +18,15 @@ public class UsersController {
     private PetsService petsService;
 
     @PostMapping("/sign-up")
-    public @ResponseBody Result<User> signUp(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
-        return usersService.create(username, email, password);
+    public @ResponseBody Result<User> signUp(@RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam String petName) {
+        Result<User> newUser = usersService.create(username, email, password);
+        if (newUser.isSuccess()) {
+            Pet pet = petsService.create(newUser.getData().getId(), petName);
+        }
+        return newUser;
     }
 
     @GetMapping("/log-in")
@@ -30,14 +37,5 @@ public class UsersController {
         } else {
             return Result.failure("InvalidCredentials");
         }
-    }
-
-    @PostMapping("/adopt-pet")
-    public @ResponseBody Result<Pet> adoptPet(@RequestParam int userId) {
-        Result<Pet> pet = petsService.findByOwnerId(userId);
-        if (pet.isSuccess()) {
-            return Result.failure("PetAlreadyAdopted");
-        }
-        return Result.success(petsService.create(userId));
     }
 }

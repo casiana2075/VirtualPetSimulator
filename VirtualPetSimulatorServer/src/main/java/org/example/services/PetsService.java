@@ -15,8 +15,8 @@ public class PetsService {
     @Autowired
     private UsersService usersService;
 
-    public Pet create(int ownerId) {
-        Pet pet = new Pet(ownerId);
+    public Pet create(int ownerId, String name) {
+        Pet pet = new Pet(ownerId, name);
         return petsRepository.save(pet);
     }
 
@@ -36,20 +36,6 @@ public class PetsService {
         int scoreDecrease = pet.applyStatsDecrease(getStatsDifference(pet));
         usersService.updateScore(pet.getOwnerId(), -scoreDecrease);
         return Result.success(pet);
-    }
-
-    public Result<String> changeName(int petId, String newName) {
-        Pet pet = petsRepository.findById(petId).orElse(null);
-        if (pet == null) {
-            return Result.failure("PetNotFound");
-        }
-        if (newName.isBlank() || newName.length() > 24) {
-            return Result.failure("InvalidName");
-        }
-
-        pet.setName(newName);
-        petsRepository.save(pet);
-        return Result.success(newName);
     }
 
     private Integer[] getStatsDifference(Pet pet) {
@@ -76,7 +62,6 @@ public class PetsService {
         scoreDifference += Math.max(0, currentCleanness - pet.getCleanness());
 
         usersService.updateScore(pet.getOwnerId(), scoreDifference);
-        usersService.updateCurrency(pet.getOwnerId(), scoreDifference / 10);
 
         pet.setHunger(currentHunger);
         pet.setHappiness(currentHappiness);

@@ -13,19 +13,9 @@ public class PetsController {
     @Autowired
     private PetsService petsService;
 
-    @PostMapping("/create")
-    public @ResponseBody Pet create(@RequestParam int ownerId) {
-        return petsService.create(ownerId);
-    }
-
     @GetMapping("/of-owner")
     public @ResponseBody Result<Pet> findByOwnerId(@RequestParam int ownerId) {
         return petsService.findByOwnerId(ownerId);
-    }
-
-    @PatchMapping("/rename")
-    public @ResponseBody Result<String> changeName(@RequestParam int petId, @RequestParam String newName) {
-        return petsService.changeName(petId, newName);
     }
 
     @PatchMapping("/save")
