@@ -3,9 +3,7 @@ package org.example;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Font;
@@ -165,7 +163,7 @@ public abstract class ClientApplicationBuilder {
         return catAnimations;
     }
 
-    public static Map<String, Label> createStaticLabels(ClientApplication clientApplication, Font font) {
+    public static Map<String, Label> createStaticLabels(Font font) {
         Map<String, Label> staticLabels = new HashMap<>();
         staticLabels.put("logIn", new Label("Please login to see your beloved pet!"));
         staticLabels.put("noAccount?", new Label("...or you don't have an account?"));
@@ -175,5 +173,49 @@ public abstract class ClientApplicationBuilder {
             label.setFont(font);
         }
         return staticLabels;
+    }
+
+    public static Map<String, Hyperlink> createHyperlinks(Font font) {
+        Map<String, Hyperlink> hyperlinks = new HashMap<>();
+        hyperlinks.put("toSignUp", new Hyperlink("Register here"));
+        hyperlinks.put("toLogIn", new Hyperlink("Login here"));
+        for (Hyperlink hyperlink : hyperlinks.values()) {
+            hyperlink.setFont(font);
+        }
+        return hyperlinks;
+    }
+
+    public static Map<String, TextField> createInputFields(Font font) {
+        Map<String, TextField> inputFields = new HashMap<>();
+
+        TextField identifierField = new TextField();
+        identifierField.setPromptText("Username or Email");
+        inputFields.put("identifier", identifierField);
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        inputFields.put("username", usernameField);
+
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email");
+        inputFields.put("email", emailField);
+
+        PasswordField logInPasswordField = new PasswordField();
+        logInPasswordField.setPromptText("Password");
+        inputFields.put("logInPassword", logInPasswordField);
+
+        PasswordField signUpPasswordField = new PasswordField();
+        signUpPasswordField.setPromptText("Password");
+        inputFields.put("signUpPassword", signUpPasswordField);
+
+        TextField petNameField = new TextField();
+        petNameField.setPromptText("Your Pet's Name");
+        inputFields.put("petName", petNameField);
+
+        for (TextField inputField : inputFields.values()) {
+            inputField.setFont(font);
+            inputField.setMaxWidth(300);
+        }
+        return inputFields;
     }
 }

@@ -39,7 +39,9 @@ public class ClientApplication extends Application {
         Map<String, Button> gameQuitButtons = ClientApplicationBuilder.createGameQuitButtons(this);
         ImageView catImageView = ClientApplicationBuilder.createCatImageView(this);
         Map<String, Timeline> catAnimations = ClientApplicationBuilder.createCatAnimations(this, catImageView);
-        Map<String, Label> staticLabels = ClientApplicationBuilder.createStaticLabels(this, font);
+        Map<String, Label> staticLabels = ClientApplicationBuilder.createStaticLabels(font);
+        Map<String, Hyperlink> hyperlinks = ClientApplicationBuilder.createHyperlinks(font);
+        Map<String, TextField> inputFields = ClientApplicationBuilder.createInputFields(font);
 
         gameQuitButtons.get("exit").setOnAction(event -> {
             ServiceCaller.updatePet(pet.getId(),
@@ -50,56 +52,30 @@ public class ClientApplication extends Application {
         });
 
         //login fields
-        TextField loginUsernameField = new TextField();
-        loginUsernameField.setPromptText("Username");
-        loginUsernameField.setFont(font);
-        PasswordField loginPasswordField = new PasswordField();
-        loginPasswordField.setPromptText("Password");
-        loginPasswordField.setFont(font);
         Button loginButton = new Button("Login");
         loginButton.setFont(font);
         Button homeButton = new Button("Home");
         homeButton.setFont(font);
-        Hyperlink registerLink = new Hyperlink("Register here");
-        registerLink.setFont(font);
         HBox loginPromptBox = new HBox();
-        loginPromptBox.getChildren().addAll(staticLabels.get("noAccount?"), registerLink);
+        loginPromptBox.getChildren().addAll(staticLabels.get("noAccount?"), hyperlinks.get("toSignUp"));
         loginPromptBox.setAlignment(Pos.CENTER);
 
 
         //register fields
-        TextField registerUsernameField = new TextField();
-        registerUsernameField.setPromptText("Username");
-        registerUsernameField.setFont(font);
-        PasswordField registerPasswordField = new PasswordField();
-        registerPasswordField.setPromptText("Create a password");
-        registerPasswordField.setFont(font);
-        TextField registerPetNameField = new TextField();
-        registerPetNameField.setPromptText("Your Pet Name");
-        registerPetNameField.setFont(font);
-        TextField registerEmailField = new TextField();
-        registerEmailField.setPromptText("Email Address");
-        registerEmailField.setFont(font);
         Button registerButton = new Button("Register");
         registerButton.setFont(font);
-        Hyperlink loginLink = new Hyperlink("Login here");
-        loginLink.setFont(font);
         HBox registerPromptBox = new HBox();
-        registerPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"), loginLink);
+        registerPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"), hyperlinks.get("toLogIn"));
         registerPromptBox.setAlignment(Pos.CENTER);
         VBox registerBox = new VBox();
-        registerUsernameField.setMaxWidth(300);
-        registerPasswordField.setMaxWidth(300);
-        registerPetNameField.setMaxWidth(300);
-        registerEmailField.setMaxWidth(300);
-        registerBox.getChildren().addAll(staticLabels.get("signUp"), registerUsernameField, registerPasswordField, registerPetNameField, registerEmailField, registerPromptBox, registerButton, homeButton);
+        registerBox.getChildren().addAll(staticLabels.get("signUp"), inputFields.get("username"), inputFields.get("signUpPassword"), inputFields.get("petName"), inputFields.get("email"), registerPromptBox, registerButton, homeButton);
         registerBox.setAlignment(Pos.CENTER);
         registerBox.setSpacing(20);
         registerBox.setStyle("-fx-background-color: #A9A9A9;");
         //scene for register
         Scene registerScene = new Scene(registerBox, screenWidth, screenHeight);
         //action of register here link
-        registerLink.setOnAction(event -> {
+        hyperlinks.get("toSignUp").setOnAction(event -> {
             primaryStage.setScene(registerScene);
             primaryStage.setTitle("Welcome to Virtual Pet Simulator! Please Create An Account...");
             primaryStage.setResizable(false);
@@ -109,9 +85,7 @@ public class ClientApplication extends Application {
 
         // Create a login box/scene and add the login fields to it
         VBox loginBox = new VBox();
-        loginUsernameField.setMaxWidth(300);
-        loginPasswordField.setMaxWidth(300);
-        loginBox.getChildren().addAll(staticLabels.get("logIn"),loginUsernameField, loginPasswordField, loginPromptBox, loginButton, homeButton);
+        loginBox.getChildren().addAll(staticLabels.get("logIn"), inputFields.get("identifier"), inputFields.get("logInPassword"), loginPromptBox, loginButton, homeButton);
         loginBox.setAlignment(Pos.CENTER);
         loginBox.setSpacing(20);
         loginBox.setStyle("-fx-background-color: #A9A9A9;");
@@ -130,7 +104,7 @@ public class ClientApplication extends Application {
             pet = null;
         });
         //action of login here link
-        loginLink.setOnAction(event1 -> {
+        hyperlinks.get("toLogIn").setOnAction(event1 -> {
             primaryStage.setScene(loginScene);
             primaryStage.setTitle("Back to Previous Page");
             primaryStage.setResizable(false);
@@ -322,12 +296,12 @@ public class ClientApplication extends Application {
         primaryStage.show();
 
         loginButton.setOnAction(event -> {
-            String username = loginUsernameField.getText();
-            String password = loginPasswordField.getText();
-            Result<User> loginResult = ServiceCaller.logIn(username, password);
+            String identifier = inputFields.get("identifier").getText();
+            String password = inputFields.get("logInPassword").getText();
+            Result<User> loginResult = ServiceCaller.logIn(identifier, password);
             if (loginResult.isSuccess()) {
-                loginUsernameField.clear();
-                loginPasswordField.clear();
+                inputFields.get("identifier").clear();
+                inputFields.get("logInPassword").clear();
                 user = loginResult.getData();
                 Result<Pet> petResult = ServiceCaller.getPet(user.getId());
                 if (petResult.isSuccess()) {
@@ -345,16 +319,16 @@ public class ClientApplication extends Application {
         });
 
         registerButton.setOnAction(event -> {
-            String username = registerUsernameField.getText();
-            String password = registerPasswordField.getText();
-            String email = registerEmailField.getText();
-            String petName = registerPetNameField.getText();
+            String username = inputFields.get("username").getText();
+            String password = inputFields.get("signInPassword").getText();
+            String email = inputFields.get("email").getText();
+            String petName = inputFields.get("petName").getText();
             Result<User> registerResult = ServiceCaller.signUp(username, email, password, petName);
             if (registerResult.isSuccess()) {
-                registerUsernameField.clear();
-                registerPasswordField.clear();
-                registerEmailField.clear();
-                registerPetNameField.clear();
+                inputFields.get("username").clear();
+                inputFields.get("signInPassword").clear();
+                inputFields.get("email").clear();
+                inputFields.get("petName").clear();
                 user = registerResult.getData();
                 Result<Pet> petResult = ServiceCaller.getPet(user.getId());
                 if (petResult.isSuccess()) {
