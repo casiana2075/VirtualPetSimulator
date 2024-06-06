@@ -18,26 +18,34 @@ public class UsersController {
     private PetsService petsService;
 
     @PostMapping("/sign-up")
-    public @ResponseBody Result<User> signUp(@RequestParam String username, @RequestParam String email, @RequestParam String password) {
-        return usersService.create(username, email, password);
+    public @ResponseBody Result<User> signUp(@RequestParam String username,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam String petName) {
+        Result<User> newUser = usersService.create(username, email, password);
+        if (newUser.isSuccess()) {
+            Pet pet = petsService.create(newUser.getData().getId(), petName);
+            return newUser;
+        }
+        return Result.failure(newUser.getError());
     }
 
     @GetMapping("/log-in")
-    public @ResponseBody Result<Integer> logIn(@RequestParam String identifier, @RequestParam String password) {
+    public @ResponseBody Result<User> logIn(@RequestParam String identifier, @RequestParam String password) {
         Result<User> user = usersService.findByIdentifier(identifier);
         if (user.isSuccess() && user.getData().getPassword().equals(password)) {
-            return Result.success(user.getData().getId());
+            return user;
         } else {
             return Result.failure("InvalidCredentials");
         }
     }
 
-    @PostMapping("/adopt-pet")
-    public @ResponseBody Result<Pet> adoptPet(@RequestParam int userId) {
-        Result<Pet> pet = petsService.findByOwnerId(userId);
-        if (pet.isSuccess()) {
-            return Result.failure("PetAlreadyAdopted");
+    @GetMapping("/{id}/score")
+    public @ResponseBody Result<Integer> getScore(@PathVariable int id) {
+        Result<User> user = usersService.findById(id);
+        if (user.isSuccess()) {
+            return Result.success(user.getData().getScore());
         }
-        return Result.success(petsService.create(userId));
+        return Result.failure("UserNotFound");
     }
 }

@@ -1,44 +1,24 @@
 package org.example.entities;
 
-import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "pets")
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter @EqualsAndHashCode
-public class Pet {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public final class Pet {
     private Integer id;
 
-    @Column(name = "ownerId", nullable = false)
     private Integer ownerId;
 
-    @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "lastUpdate", nullable = false)
     private LocalDateTime lastUpdate;
 
-    @Column(name = "hunger", nullable = false)
     private Integer hunger;
 
-    @Column(name = "happiness", nullable = false)
     private Integer happiness;
 
-    @Column(name = "cleanness", nullable = false)
     private Integer cleanness;
-
-    public Pet(Integer ownerId, String name) {
-        this.ownerId = ownerId;
-        this.name = name;
-        this.lastUpdate = LocalDateTime.now();
-        this.hunger = 50;
-        this.happiness = 50;
-        this.cleanness = 50;
-    }
 
     public int applyStatsDecrease(Integer[] statsDifference) {
         int scoreDifference = 0;
