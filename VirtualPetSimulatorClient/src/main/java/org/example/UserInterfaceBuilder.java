@@ -361,8 +361,8 @@ public abstract class UserInterfaceBuilder {
 
         VBox petInteractionButtonsBox = new VBox();
         petInteractionButtonsBox.getChildren().addAll(petInteractionButtons.get("play"),
-                petInteractionButtons.get("wash"),
-                petInteractionButtons.get("feed"));
+                petInteractionButtons.get("feed"),
+                petInteractionButtons.get("wash"));
         petInteractionButtonsBox.setAlignment(Pos.BOTTOM_LEFT);
         petInteractionButtonsBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("petInteraction", petInteractionButtonsBox);
