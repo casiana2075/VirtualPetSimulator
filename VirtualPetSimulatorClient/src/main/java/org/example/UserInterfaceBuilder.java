@@ -5,9 +5,11 @@ import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -19,7 +21,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ClientApplicationBuilder {
+public abstract class UserInterfaceBuilder {
     public static void setSizes(ClientApplication clientApplication) {
         Screen screen = Screen.getPrimary();
         Rectangle2D bounds = screen.getBounds();
@@ -369,6 +371,22 @@ public abstract class ClientApplicationBuilder {
                 boxes.get("nameAndScore"));
         boxes.put("info", infoBox);
 
+        BorderPane borderPaneGame = new BorderPane();
+        borderPaneGame.setTop(boxes.get("info"));
+        borderPaneGame.setLeft(boxes.get("petInteraction"));
+        borderPaneGame.setRight(boxes.get("gameQuit"));
+        borderPaneGame.setCenter(boxes.get("cat"));
+        boxes.put("game", borderPaneGame);
+
         return boxes;
+    }
+
+    public static Map<String, Scene> buildScenes(Map<String, Pane> boxes, double screenWidth, double screenHeight) {
+        Map<String, Scene> scenes = new HashMap<>();
+        scenes.put("signUp", new Scene(boxes.get("signUp"), screenWidth, screenHeight));
+        scenes.put("logIn", new Scene(boxes.get("logIn"), screenWidth, screenHeight));
+        scenes.put("home", new Scene(boxes.get("home"), screenWidth, screenHeight));
+        scenes.put("game", new Scene(boxes.get("game"), screenWidth, screenHeight));
+        return scenes;
     }
 }
