@@ -3,7 +3,7 @@ package org.example.entities;
 import lombok.*;
 
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter @EqualsAndHashCode
-public class User {
+public final class User {
     private Integer id;
 
     private String username;

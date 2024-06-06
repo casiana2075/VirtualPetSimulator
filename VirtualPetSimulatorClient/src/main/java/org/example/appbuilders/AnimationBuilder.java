@@ -1,10 +1,11 @@
-package org.example;
+package org.example.appbuilders;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
+import org.example.ClientApplication;
 
 public abstract class AnimationBuilder {
     public static Timeline createIdleAnimation(ClientApplication clientApplication, ImageView catImageView) {

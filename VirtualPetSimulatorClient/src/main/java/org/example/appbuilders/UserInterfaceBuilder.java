@@ -1,4 +1,4 @@
-package org.example;
+package org.example.appbuilders;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -16,31 +16,23 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.util.Duration;
+import org.example.ClientApplication;
 
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class UserInterfaceBuilder {
-    public static void setSizes(ClientApplication clientApplication) {
-        Screen screen = Screen.getPrimary();
-        Rectangle2D bounds = screen.getBounds();
-        double width = bounds.getWidth();
-        double height = bounds.getHeight();
-        clientApplication.setScreenWidth(width);
-        clientApplication.setScreenHeight(height);
-    }
-
-    public static Map<String, ImageView> createStatsImageViews(ClientApplication clientApplication) {
+    public static void createStatsImageViews(ClientApplication app) {
         Map<String, ImageView> imageViews = new HashMap<>();
-        imageViews.put("heart", initStatsImageView(clientApplication, "/Items/heart.png"));
-        imageViews.put("fish", initStatsImageView(clientApplication, "/Items/fish.png"));
-        imageViews.put("soap", initStatsImageView(clientApplication, "/Items/soap.png"));
-        return imageViews;
+        imageViews.put("heart", initStatsImageView(app, "/Items/heart.png"));
+        imageViews.put("fish", initStatsImageView(app, "/Items/fish.png"));
+        imageViews.put("soap", initStatsImageView(app, "/Items/soap.png"));
+        app.setImageViews(imageViews);
     }
 
-    private static ImageView initStatsImageView(ClientApplication clientApplication, String path) {
-        Image image = new Image(clientApplication
+    private static ImageView initStatsImageView(ClientApplication app, String path) {
+        Image image = new Image(app
                 .getClass()
                 .getResourceAsStream(path));
         ImageView imageView = new ImageView(image);
@@ -61,12 +53,12 @@ public abstract class UserInterfaceBuilder {
         return imageView;
     }
 
-    public static Map<String, ProgressBar> createProgressBars() {
+    public static void createProgressBars(ClientApplication app) {
         Map<String, ProgressBar> progressBars = new HashMap<>();
         progressBars.put("hunger", initProgressBar());
         progressBars.put("happiness", initProgressBar());
         progressBars.put("cleanness", initProgressBar());
-        return progressBars;
+        app.setProgressBars(progressBars);
     }
 
     private static ProgressBar initProgressBar() {
@@ -78,60 +70,60 @@ public abstract class UserInterfaceBuilder {
         return progressBar;
     }
 
-    public static Timeline createProgressBarsTimeline(Map<String, ProgressBar> progressBars) {
+    public static void createProgressBarsTimeline(ClientApplication app) {
         Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(10), event -> {
-            double happiness = progressBars.get("happiness").getProgress();
-            double hunger = progressBars.get("hunger").getProgress();
-            double cleanness = progressBars.get("cleanness").getProgress();
+            double happiness = app.getProgressBars().get("happiness").getProgress();
+            double hunger = app.getProgressBars().get("hunger").getProgress();
+            double cleanness = app.getProgressBars().get("cleanness").getProgress();
             if (happiness > 0) {
-                progressBars.get("happiness").setProgress(happiness - 0.05);
+                app.getProgressBars().get("happiness").setProgress(happiness - 0.05);
             }
             if (hunger > 0) {
-                progressBars.get("hunger").setProgress(hunger - 0.1);
+                app.getProgressBars().get("hunger").setProgress(hunger - 0.1);
             }
             if (cleanness > 0) {
-                progressBars.get("cleanness").setProgress(cleanness - 0.01);
+                app.getProgressBars().get("cleanness").setProgress(cleanness - 0.01);
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
-        return timeline;
+        app.setProgressBarsTimeline(timeline);
     }
 
-    public static Font loadFont(ClientApplication clientApplication) {
-        InputStream is = clientApplication
+    public static void loadFont(ClientApplication app) {
+        InputStream is = app
                 .getClass()
                 .getResourceAsStream("/Fonts/PixelatedFont.ttf");
-        return Font.loadFont(is, 20);
+        app.setFont(Font.loadFont(is, 20));
     }
 
-    public static Map<String, Label> createGameAreaLabels(ClientApplication clientApplication, Font font) {
+    public static void createGameAreaLabels(ClientApplication app) {
         Map<String, Label> gameAreaLabels = new HashMap<>();
-        Label nameLabel = new Label("Name: " + clientApplication.getPet().getName());
-        nameLabel.setFont(font);
+        Label nameLabel = new Label("Name: " + app.getPet().getName());
+        nameLabel.setFont(app.getFont());
         gameAreaLabels.put("name", nameLabel);
-        Label hungerLabel = new Label("Score: " + clientApplication.getUser().getScore());
-        hungerLabel.setFont(font);
+        Label hungerLabel = new Label("Score: " + app.getUser().getScore());
+        hungerLabel.setFont(app.getFont());
         gameAreaLabels.put("score", hungerLabel);
-        return gameAreaLabels;
+        app.setGameAreaLabels(gameAreaLabels);
     }
 
-    public static Map<String, Button> createPetInteractionButtons(ClientApplication clientApplication) {
+    public static void createPetInteractionButtons(ClientApplication app) {
         Map<String, Button> petInteractionButtons = new HashMap<>();
-        petInteractionButtons.put("feed", initGameAreaButton(clientApplication, "/Buttons/feedBttn.png"));
-        petInteractionButtons.put("play", initGameAreaButton(clientApplication, "/Buttons/playBttn.png"));
-        petInteractionButtons.put("wash", initGameAreaButton(clientApplication, "/Buttons/washBttn.png"));
-        return petInteractionButtons;
+        petInteractionButtons.put("feed", initGameAreaButton(app, "/Buttons/feedBttn.png"));
+        petInteractionButtons.put("play", initGameAreaButton(app, "/Buttons/playBttn.png"));
+        petInteractionButtons.put("wash", initGameAreaButton(app, "/Buttons/washBttn.png"));
+        app.setPetInteractionButtons(petInteractionButtons);
     }
 
-    public static Map<String, Button> createGameQuitButtons(ClientApplication clientApplication) {
+    public static void createGameQuitButtons(ClientApplication app) {
         Map<String, Button> gameQuitButtons = new HashMap<>();
-        gameQuitButtons.put("logout", initGameAreaButton(clientApplication, "/Buttons/logoutBttn.png"));
-        gameQuitButtons.put("exit", initGameAreaButton(clientApplication, "/Buttons/exitBttn.png"));
-        return gameQuitButtons;
+        gameQuitButtons.put("logout", initGameAreaButton(app, "/Buttons/logoutBttn.png"));
+        gameQuitButtons.put("exit", initGameAreaButton(app, "/Buttons/exitBttn.png"));
+        app.setGameQuitButtons(gameQuitButtons);
     }
 
-    private static Button initGameAreaButton(ClientApplication clientApplication, String iconPath) {
-        Image image = new Image(clientApplication
+    private static Button initGameAreaButton(ClientApplication app, String iconPath) {
+        Image image = new Image(app
                 .getClass()
                 .getResourceAsStream(iconPath));
         ImageView imageView = new ImageView(image);
@@ -151,48 +143,48 @@ public abstract class UserInterfaceBuilder {
         return button;
     }
 
-    public static ImageView createCatImageView(ClientApplication clientApplication) {
-        Image catTailUpImage = new Image(clientApplication
+    public static void createCatImageView(ClientApplication app) {
+        Image catTailUpImage = new Image(app
                 .getClass()
                 .getResourceAsStream("/CatAnimations/catTailUp.png"));
         ImageView catImageView = new ImageView(catTailUpImage);
         catImageView.setFitWidth(550);
         catImageView.setFitHeight(550);
-        return catImageView;
+        app.setCatImageView(catImageView);
     }
 
-    public static Map<String, Timeline> createCatAnimations(ClientApplication clientApplication, ImageView catImageView) {
+    public static void createCatAnimations(ClientApplication app) {
         Map<String, Timeline> catAnimations = new HashMap<>();
-        catAnimations.put("idle", AnimationBuilder.createIdleAnimation(clientApplication, catImageView));
-        catAnimations.put("eating", AnimationBuilder.createEatingAnimation(clientApplication, catImageView));
-        catAnimations.put("washing", AnimationBuilder.createWashingAnimation(clientApplication, catImageView));
-        catAnimations.put("playing", AnimationBuilder.createPlayingAnimation(clientApplication, catImageView));
-        return catAnimations;
+        catAnimations.put("idle", AnimationBuilder.createIdleAnimation(app, app.getCatImageView()));
+        catAnimations.put("eating", AnimationBuilder.createEatingAnimation(app, app.getCatImageView()));
+        catAnimations.put("washing", AnimationBuilder.createWashingAnimation(app, app.getCatImageView()));
+        catAnimations.put("playing", AnimationBuilder.createPlayingAnimation(app, app.getCatImageView()));
+        app.setCatAnimations(catAnimations);
     }
 
-    public static Map<String, Label> createStaticLabels(Font font) {
+    public static void createStaticLabels(ClientApplication app) {
         Map<String, Label> staticLabels = new HashMap<>();
         staticLabels.put("logIn", new Label("Please login to see your beloved pet!"));
         staticLabels.put("noAccount?", new Label("...or you don't have an account?"));
         staticLabels.put("signUp", new Label("Create an account to have a lovely pet!"));
         staticLabels.put("alreadyAccount?", new Label("...or you already have an account?"));
         for (Label label : staticLabels.values()) {
-            label.setFont(font);
+            label.setFont(app.getFont());
         }
-        return staticLabels;
+        app.setStaticLabels(staticLabels);
     }
 
-    public static Map<String, Hyperlink> createHyperlinks(Font font) {
+    public static void createHyperlinks(ClientApplication app) {
         Map<String, Hyperlink> hyperlinks = new HashMap<>();
         hyperlinks.put("toSignUp", new Hyperlink("Register here"));
         hyperlinks.put("toLogIn", new Hyperlink("Login here"));
         for (Hyperlink hyperlink : hyperlinks.values()) {
-            hyperlink.setFont(font);
+            hyperlink.setFont(app.getFont());
         }
-        return hyperlinks;
+        app.setHyperlinks(hyperlinks);
     }
 
-    public static Map<String, TextField> createInputFields(Font font) {
+    public static void createInputFields(ClientApplication app) {
         Map<String, TextField> inputFields = new HashMap<>();
 
         TextField identifierField = new TextField();
@@ -220,18 +212,18 @@ public abstract class UserInterfaceBuilder {
         inputFields.put("petName", petNameField);
 
         for (TextField inputField : inputFields.values()) {
-            inputField.setFont(font);
+            inputField.setFont(app.getFont());
             inputField.setMaxWidth(300);
         }
-        return inputFields;
+        app.setInputFields(inputFields);
     }
 
-    public static Map<String, Button> createGameEnterButtons(ClientApplication clientApplication, Font font) {
+    public static void createGameEnterButtons(ClientApplication app) {
         Map<String, Button> gameEnterButtons = new HashMap<>();
         gameEnterButtons.put("logIn", new Button("Login"));
         gameEnterButtons.put("signUp", new Button("Register"));
 
-        Image toLoginImage = new Image(clientApplication
+        Image toLoginImage = new Image(app
                 .getClass()
                 .getResourceAsStream("/Buttons/loginBttn.png"));
         ImageView toLoginImageView = new ImageView(toLoginImage);
@@ -242,7 +234,7 @@ public abstract class UserInterfaceBuilder {
         gameEnterButtons.put("toLogIn", toLoginButton);
 
 
-        Image toRegisterImage = new Image(clientApplication
+        Image toRegisterImage = new Image(app
                 .getClass()
                 .getResourceAsStream("/Buttons/createAccBttn.png"));
         ImageView toRegisterImageView = new ImageView(toRegisterImage);
@@ -255,64 +247,55 @@ public abstract class UserInterfaceBuilder {
         gameEnterButtons.put("toHomeFromLogIn", new Button("Home"));
         gameEnterButtons.put("toHomeFromSignUp", new Button("Home"));
         for (Button button : gameEnterButtons.values()) {
-            button.setFont(font);
+            button.setFont(app.getFont());
         }
-        return gameEnterButtons;
+        app.setGameEnterButtons(gameEnterButtons);
     }
 
-    public static Map<String, Pane> createBoxes(Map<String, Label> staticLabels,
-                                                Map<String, ImageView> imageViews,
-                                                Map<String, ProgressBar> progressBars,
-                                                Map<String, Hyperlink> hyperlinks,
-                                                Map<String, TextField> inputFields,
-                                                Map<String, Button> gameEnterButtons,
-                                                Map<String, Label> gameAreaLabels,
-                                                ImageView catImageView,
-                                                Map<String, Button> gameQuitButtons,
-                                                Map<String, Button> petInteractionButtons) {
+    public static void createBoxes(ClientApplication app) {
         Map<String, Pane> boxes = new HashMap<>();
 
         HBox logInPromptBox = new HBox();
-        logInPromptBox.getChildren().addAll(staticLabels.get("noAccount?"),
-                hyperlinks.get("toSignUp"));
+        logInPromptBox.getChildren().addAll(app.getStaticLabels().get("noAccount?"),
+                app.getHyperlinks().get("toSignUp"));
         logInPromptBox.setAlignment(Pos.CENTER);
         boxes.put("logInPrompt", logInPromptBox);
 
         HBox signUpPromptBox = new HBox();
-        signUpPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"),
-                hyperlinks.get("toLogIn"));
+        signUpPromptBox.getChildren().addAll(app.getStaticLabels().get("alreadyAccount?"),
+                app.getHyperlinks().get("toLogIn"));
         signUpPromptBox.setAlignment(Pos.CENTER);
         boxes.put("signUpPrompt", signUpPromptBox);
 
         VBox signUpBox = new VBox();
-        signUpBox.getChildren().addAll(staticLabels.get("signUp"),
-                inputFields.get("username"),
-                inputFields.get("signUpPassword"),
-                inputFields.get("petName"),
-                inputFields.get("email"),
+        signUpBox.getChildren().addAll(app.getStaticLabels().get("signUp"),
+                app.getInputFields().get("username"),
+                app.getInputFields().get("signUpPassword"),
+                app.getInputFields().get("petName"),
+                app.getInputFields().get("email"),
                 boxes.get("signUpPrompt"),
-                gameEnterButtons.get("signUp"),
-                gameEnterButtons.get("toHomeFromSignUp"));
+                app.getGameEnterButtons().get("signUp"),
+                app.getGameEnterButtons().get("toHomeFromSignUp"));
         signUpBox.setAlignment(Pos.CENTER);
         signUpBox.setSpacing(20);
         signUpBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("signUp", signUpBox);
 
         VBox logInBox = new VBox();
-        logInBox.getChildren().addAll(staticLabels.get("logIn"),
-                inputFields.get("identifier"),
-                inputFields.get("logInPassword"),
+        logInBox.getChildren().addAll(app.getStaticLabels().get("logIn"),
+                app.getInputFields().get("identifier"),
+                app.getInputFields().get("logInPassword"),
                 boxes.get("logInPrompt"),
-                gameEnterButtons.get("logIn"),
-                gameEnterButtons.get("toHomeFromLogIn"));
+                app.getGameEnterButtons().get("logIn"),
+                app.getGameEnterButtons().get("toHomeFromLogIn"));
         logInBox.setAlignment(Pos.CENTER);
         logInBox.setSpacing(20);
         logInBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("logIn", logInBox);
 
         HBox homeButtonsBox = new HBox();
-        homeButtonsBox.getChildren().addAll(gameEnterButtons.get("toLogIn"),
-                gameEnterButtons.get("toSignUp"));
+        homeButtonsBox.getChildren().addAll(app.getGameEnterButtons().get("toLogIn"),
+                app.getGameEnterButtons().get("toSignUp"));
         homeButtonsBox.setTranslateY(500);
         boxes.put("homeButtons", homeButtonsBox);
 
@@ -324,12 +307,12 @@ public abstract class UserInterfaceBuilder {
         boxes.put("home", homeBox);
 
         HBox statsBox = new HBox();
-        statsBox.getChildren().addAll(imageViews.get("heart"),
-                progressBars.get("happiness"),
-                imageViews.get("fish"),
-                progressBars.get("hunger"),
-                imageViews.get("soap"),
-                progressBars.get("cleanness"));
+        statsBox.getChildren().addAll(app.getImageViews().get("heart"),
+                app.getProgressBars().get("happiness"),
+                app.getImageViews().get("fish"),
+                app.getProgressBars().get("hunger"),
+                app.getImageViews().get("soap"),
+                app.getProgressBars().get("cleanness"));
         statsBox.setAlignment(Pos.TOP_CENTER);
         statsBox.setSpacing(50);
         statsBox.setPadding(new Insets(30, 0, 0, 0));
@@ -337,8 +320,8 @@ public abstract class UserInterfaceBuilder {
         boxes.put("stats", statsBox);
 
         HBox userInfoBox = new HBox();
-        userInfoBox.getChildren().addAll(gameAreaLabels.get("name"),
-                gameAreaLabels.get("score"));
+        userInfoBox.getChildren().addAll(app.getGameAreaLabels().get("name"),
+                app.getGameAreaLabels().get("score"));
         userInfoBox.setAlignment(Pos.CENTER);
         userInfoBox.setSpacing(300);
         userInfoBox.setPadding(new Insets(10, 0, 0, 0));
@@ -348,21 +331,21 @@ public abstract class UserInterfaceBuilder {
         VBox centerCatBox = new VBox();
         centerCatBox.setAlignment(Pos.CENTER);
         centerCatBox.setStyle("-fx-background-color: #A9A9A9;");
-        centerCatBox.getChildren().add(catImageView);
+        centerCatBox.getChildren().add(app.getCatImageView());
         boxes.put("cat", centerCatBox);
 
 
         VBox gameQuitButtonsBox = new VBox();
-        gameQuitButtonsBox.getChildren().addAll(gameQuitButtons.get("logout"),
-                gameQuitButtons.get("exit"));
+        gameQuitButtonsBox.getChildren().addAll(app.getGameQuitButtons().get("logout"),
+                app.getGameQuitButtons().get("exit"));
         gameQuitButtonsBox.setAlignment(Pos.BOTTOM_RIGHT);
         gameQuitButtonsBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("gameQuit", gameQuitButtonsBox);
 
         VBox petInteractionButtonsBox = new VBox();
-        petInteractionButtonsBox.getChildren().addAll(petInteractionButtons.get("play"),
-                petInteractionButtons.get("feed"),
-                petInteractionButtons.get("wash"));
+        petInteractionButtonsBox.getChildren().addAll(app.getPetInteractionButtons().get("play"),
+                app.getPetInteractionButtons().get("feed"),
+                app.getPetInteractionButtons().get("wash"));
         petInteractionButtonsBox.setAlignment(Pos.BOTTOM_LEFT);
         petInteractionButtonsBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("petInteraction", petInteractionButtonsBox);
@@ -378,15 +361,19 @@ public abstract class UserInterfaceBuilder {
         borderPaneGame.setCenter(boxes.get("cat"));
         boxes.put("game", borderPaneGame);
 
-        return boxes;
+        app.setBoxes(boxes);
     }
 
-    public static Map<String, Scene> buildScenes(Map<String, Pane> boxes, double screenWidth, double screenHeight) {
+    public static void buildScenes(ClientApplication app) {
         Map<String, Scene> scenes = new HashMap<>();
-        scenes.put("signUp", new Scene(boxes.get("signUp"), screenWidth, screenHeight));
-        scenes.put("logIn", new Scene(boxes.get("logIn"), screenWidth, screenHeight));
-        scenes.put("home", new Scene(boxes.get("home"), screenWidth, screenHeight));
-        scenes.put("game", new Scene(boxes.get("game"), screenWidth, screenHeight));
-        return scenes;
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getBounds();
+        double width = bounds.getWidth();
+        double height = bounds.getHeight();
+        scenes.put("signUp", new Scene(app.getBoxes().get("signUp"), width, height));
+        scenes.put("logIn", new Scene(app.getBoxes().get("logIn"), width, height));
+        scenes.put("home", new Scene(app.getBoxes().get("home"), width, height));
+        scenes.put("game", new Scene(app.getBoxes().get("game"), width, height));
+        app.setScenes(scenes);
     }
 }

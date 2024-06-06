@@ -1,10 +1,10 @@
-package org.example;
+package org.example.appbuilders;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.ProgressBar;
 
-public class ProgressBarChangeListener implements ChangeListener<Number> {
+public final class ProgressBarChangeListener implements ChangeListener<Number> {
     private final ProgressBar progressBar;
 
     public ProgressBarChangeListener(ProgressBar progressBar) {

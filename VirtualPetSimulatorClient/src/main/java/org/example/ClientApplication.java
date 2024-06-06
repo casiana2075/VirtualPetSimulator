@@ -10,6 +10,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.appbuilders.FunctionalityBuilder;
+import org.example.appbuilders.UserInterfaceBuilder;
 import org.example.entities.Pet;
 import org.example.entities.User;
 
@@ -17,57 +19,62 @@ import java.util.Map;
 
 @Getter @Setter
 public class ClientApplication extends Application {
-    private double screenHeight;
-    private double screenWidth;
+    private Map<String, ImageView> imageViews;
+    private Map<String, ProgressBar> progressBars;
+    private Timeline progressBarsTimeline;
+    private Font font;
+    private Map<String, Label> gameAreaLabels;
+    private Map<String, Button> petInteractionButtons;
+    private Map<String, Button> gameQuitButtons;
+    private ImageView catImageView;
+    private Map<String, Timeline> catAnimations;
+    private Map<String, Label> staticLabels;
+    private Map<String, Hyperlink> hyperlinks;
+    private Map<String, TextField> inputFields;
+    private Map<String, Button> gameEnterButtons;
+    private Map<String, Pane> boxes;
+    private Map<String, Scene> scenes;
+
     private User user = new User();
     private Pet pet = new Pet();
 
-    public void start(Stage primaryStage) throws Exception {
-        UserInterfaceBuilder.setSizes(this);
-        Map<String, ImageView> imageViews = UserInterfaceBuilder.createStatsImageViews(this);
-        Map<String, ProgressBar> progressBars = UserInterfaceBuilder.createProgressBars();
-        Timeline progressBarsTimeline = UserInterfaceBuilder.createProgressBarsTimeline(progressBars);
-        Font font = UserInterfaceBuilder.loadFont(this);
-        Map<String, Label> gameAreaLabels = UserInterfaceBuilder.createGameAreaLabels(this, font);
-        Map<String, Button> petInteractionButtons = UserInterfaceBuilder.createPetInteractionButtons(this);
-        Map<String, Button> gameQuitButtons = UserInterfaceBuilder.createGameQuitButtons(this);
-        ImageView catImageView = UserInterfaceBuilder.createCatImageView(this);
-        Map<String, Timeline> catAnimations = UserInterfaceBuilder.createCatAnimations(this, catImageView);
-        Map<String, Label> staticLabels = UserInterfaceBuilder.createStaticLabels(font);
-        Map<String, Hyperlink> hyperlinks = UserInterfaceBuilder.createHyperlinks(font);
-        Map<String, TextField> inputFields = UserInterfaceBuilder.createInputFields(font);
-        Map<String, Button> gameEnterButtons = UserInterfaceBuilder.createGameEnterButtons(this, font);
-        Map<String, Pane> boxes = UserInterfaceBuilder.createBoxes(staticLabels,
-                imageViews,
-                progressBars,
-                hyperlinks,
-                inputFields,
-                gameEnterButtons,
-                gameAreaLabels,
-                catImageView,
-                gameQuitButtons,
-                petInteractionButtons);
-        Map<String, Scene> scenes = UserInterfaceBuilder.buildScenes(boxes, screenWidth, screenHeight);
+    private void buildUserInterface() {
+        UserInterfaceBuilder.createStatsImageViews(this);
+        UserInterfaceBuilder.createProgressBars(this);
+        UserInterfaceBuilder.createProgressBarsTimeline(this);
+        UserInterfaceBuilder.loadFont(this);
+        UserInterfaceBuilder.createGameAreaLabels(this);
+        UserInterfaceBuilder.createPetInteractionButtons(this);
+        UserInterfaceBuilder.createGameQuitButtons(this);
+        UserInterfaceBuilder.createCatImageView(this);
+        UserInterfaceBuilder.createCatAnimations(this);
+        UserInterfaceBuilder.createStaticLabels(this);
+        UserInterfaceBuilder.createHyperlinks(this);
+        UserInterfaceBuilder.createInputFields(this);
+        UserInterfaceBuilder.createGameEnterButtons(this);
+        UserInterfaceBuilder.createBoxes(this);
+        UserInterfaceBuilder.buildScenes(this);
+    }
 
-        FunctionalityBuilder.bindHyperlinks(primaryStage, scenes, hyperlinks);
-        FunctionalityBuilder.addFunctionalityToButtons(this,
-                primaryStage,
-                scenes,
-                gameEnterButtons,
-                gameQuitButtons,
-                petInteractionButtons,
-                inputFields,
-                progressBars,
-                gameAreaLabels,
-                catAnimations,
-                progressBarsTimeline);
-        FunctionalityBuilder.addAnimationEndHandlers(catAnimations, petInteractionButtons);
+    private void addFunctionality(Stage primaryStage) {
+        FunctionalityBuilder.bindHyperlinks(this, primaryStage);
+        FunctionalityBuilder.addFunctionalityToButtons(this, primaryStage);
+        FunctionalityBuilder.addAnimationEndHandlers(this);
+    }
 
+    private void launchHomeScene(Stage primaryStage) {
         primaryStage.setScene(scenes.get("home"));
         primaryStage.setTitle("Virtual Pet Game");
         primaryStage.setResizable(false);
         primaryStage.setMaximized(false);
         primaryStage.show();
+    }
+
+    @Override
+    public void start(Stage primaryStage) {
+        buildUserInterface();
+        addFunctionality(primaryStage);
+        launchHomeScene(primaryStage);
     }
 
     public static void main(String[] args) {

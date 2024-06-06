@@ -5,7 +5,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor @AllArgsConstructor @Getter @Setter @EqualsAndHashCode
-public class Pet {
+public final class Pet {
     private Integer id;
 
     private Integer ownerId;
