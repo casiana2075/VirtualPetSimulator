@@ -2,10 +2,15 @@ package org.example;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.util.Duration;
@@ -251,5 +256,119 @@ public abstract class ClientApplicationBuilder {
             button.setFont(font);
         }
         return gameEnterButtons;
+    }
+
+    public static Map<String, Pane> createBoxes(Map<String, Label> staticLabels,
+                                                Map<String, ImageView> imageViews,
+                                                Map<String, ProgressBar> progressBars,
+                                                Map<String, Hyperlink> hyperlinks,
+                                                Map<String, TextField> inputFields,
+                                                Map<String, Button> gameEnterButtons,
+                                                Map<String, Label> gameAreaLabels,
+                                                ImageView catImageView,
+                                                Map<String, Button> gameQuitButtons,
+                                                Map<String, Button> petInteractionButtons) {
+        Map<String, Pane> boxes = new HashMap<>();
+
+        HBox logInPromptBox = new HBox();
+        logInPromptBox.getChildren().addAll(staticLabels.get("noAccount?"),
+                hyperlinks.get("toSignUp"));
+        logInPromptBox.setAlignment(Pos.CENTER);
+        boxes.put("logInPrompt", logInPromptBox);
+
+        HBox signUpPromptBox = new HBox();
+        signUpPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"),
+                hyperlinks.get("toLogIn"));
+        signUpPromptBox.setAlignment(Pos.CENTER);
+        boxes.put("signUpPrompt", signUpPromptBox);
+
+        VBox signUpBox = new VBox();
+        signUpBox.getChildren().addAll(staticLabels.get("signUp"),
+                inputFields.get("username"),
+                inputFields.get("signUpPassword"),
+                inputFields.get("petName"),
+                inputFields.get("email"),
+                boxes.get("signUpPrompt"),
+                gameEnterButtons.get("signUp"),
+                gameEnterButtons.get("toHomeFromSignUp"));
+        signUpBox.setAlignment(Pos.CENTER);
+        signUpBox.setSpacing(20);
+        signUpBox.setStyle("-fx-background-color: #A9A9A9;");
+        boxes.put("signUp", signUpBox);
+
+        VBox logInBox = new VBox();
+        logInBox.getChildren().addAll(staticLabels.get("logIn"),
+                inputFields.get("identifier"),
+                inputFields.get("logInPassword"),
+                boxes.get("logInPrompt"),
+                gameEnterButtons.get("logIn"),
+                gameEnterButtons.get("toHomeFromLogIn"));
+        logInBox.setAlignment(Pos.CENTER);
+        logInBox.setSpacing(20);
+        logInBox.setStyle("-fx-background-color: #A9A9A9;");
+        boxes.put("logIn", logInBox);
+
+        HBox homeButtonsBox = new HBox();
+        homeButtonsBox.getChildren().addAll(gameEnterButtons.get("toLogIn"),
+                gameEnterButtons.get("toSignUp"));
+        homeButtonsBox.setTranslateY(500);
+        boxes.put("homeButtons", homeButtonsBox);
+
+        HBox homeBox = new HBox();
+        homeBox.setAlignment(Pos.CENTER);
+        homeBox.setSpacing(20);
+        homeBox.getChildren().add(boxes.get("homeButtons"));
+        homeBox.setStyle("-fx-background-image: url('/Items/gameCover.png'); -fx-background-size: cover; -fx-background-position: center center;");
+        boxes.put("home", homeBox);
+
+        HBox statsBox = new HBox();
+        statsBox.getChildren().addAll(imageViews.get("heart"),
+                progressBars.get("happiness"),
+                imageViews.get("fish"),
+                progressBars.get("hunger"),
+                imageViews.get("soap"),
+                progressBars.get("cleanness"));
+        statsBox.setAlignment(Pos.TOP_CENTER);
+        statsBox.setSpacing(50);
+        statsBox.setPadding(new Insets(30, 0, 0, 0));
+        statsBox.setStyle("-fx-background-color: #A9A9A9;");
+        boxes.put("stats", statsBox);
+
+        HBox userInfoBox = new HBox();
+        userInfoBox.getChildren().addAll(gameAreaLabels.get("name"),
+                gameAreaLabels.get("score"));
+        userInfoBox.setAlignment(Pos.CENTER);
+        userInfoBox.setSpacing(300);
+        userInfoBox.setPadding(new Insets(10, 0, 0, 0));
+        userInfoBox.setStyle("-fx-background-color: #A9A9A9;");
+        boxes.put("nameAndScore", userInfoBox);
+
+        VBox centerCatBox = new VBox();
+        centerCatBox.setAlignment(Pos.CENTER);
+        centerCatBox.setStyle("-fx-background-color: #A9A9A9;");
+        centerCatBox.getChildren().add(catImageView);
+        boxes.put("cat", centerCatBox);
+
+
+        VBox gameQuitButtonsBox = new VBox();
+        gameQuitButtonsBox.getChildren().addAll(gameQuitButtons.get("logout"),
+                gameQuitButtons.get("exit"));
+        gameQuitButtonsBox.setAlignment(Pos.BOTTOM_RIGHT);
+        gameQuitButtonsBox.setStyle("-fx-background-color: #A9A9A9;");
+        boxes.put("gameQuit", gameQuitButtonsBox);
+
+        VBox petInteractionButtonsBox = new VBox();
+        petInteractionButtonsBox.getChildren().addAll(petInteractionButtons.get("play"),
+                petInteractionButtons.get("wash"),
+                petInteractionButtons.get("feed"));
+        petInteractionButtonsBox.setAlignment(Pos.BOTTOM_LEFT);
+        petInteractionButtonsBox.setStyle("-fx-background-color: #A9A9A9;");
+        boxes.put("petInteraction", petInteractionButtonsBox);
+
+        VBox infoBox = new VBox(boxes.get("stats"),
+                boxes.get("nameAndScore"));
+        boxes.put("info", infoBox);
+
+        return boxes;
     }
 }

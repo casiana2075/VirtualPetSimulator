@@ -3,15 +3,11 @@ package org.example;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -43,6 +39,16 @@ public class ClientApplication extends Application {
         Map<String, Hyperlink> hyperlinks = ClientApplicationBuilder.createHyperlinks(font);
         Map<String, TextField> inputFields = ClientApplicationBuilder.createInputFields(font);
         Map<String, Button> gameEnterButtons = ClientApplicationBuilder.createGameEnterButtons(this, font);
+        Map<String, Pane> boxes = ClientApplicationBuilder.createBoxes(staticLabels,
+                imageViews,
+                progressBars,
+                hyperlinks,
+                inputFields,
+                gameEnterButtons,
+                gameAreaLabels,
+                catImageView,
+                gameQuitButtons,
+                petInteractionButtons);
 
         gameQuitButtons.get("exit").setOnAction(event -> {
             ServiceCaller.updatePet(pet.getId(),
@@ -52,23 +58,7 @@ public class ClientApplication extends Application {
             Platform.exit();
         });
 
-        //login fields
-        HBox loginPromptBox = new HBox();
-        loginPromptBox.getChildren().addAll(staticLabels.get("noAccount?"), hyperlinks.get("toSignUp"));
-        loginPromptBox.setAlignment(Pos.CENTER);
-
-
-        //register fields
-        HBox registerPromptBox = new HBox();
-        registerPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"), hyperlinks.get("toLogIn"));
-        registerPromptBox.setAlignment(Pos.CENTER);
-        VBox registerBox = new VBox();
-        registerBox.getChildren().addAll(staticLabels.get("signUp"), inputFields.get("username"), inputFields.get("signUpPassword"), inputFields.get("petName"), inputFields.get("email"), registerPromptBox, gameEnterButtons.get("signUp"), gameEnterButtons.get("toHomeFromSignUp"));
-        registerBox.setAlignment(Pos.CENTER);
-        registerBox.setSpacing(20);
-        registerBox.setStyle("-fx-background-color: #A9A9A9;");
-        //scene for register
-        Scene registerScene = new Scene(registerBox, screenWidth, screenHeight);
+        Scene registerScene = new Scene(boxes.get("signUp"), screenWidth, screenHeight);
         //action of register here link
         hyperlinks.get("toSignUp").setOnAction(event -> {
             primaryStage.setScene(registerScene);
@@ -79,12 +69,7 @@ public class ClientApplication extends Application {
         });
 
         // Create a login box/scene and add the login fields to it
-        VBox loginBox = new VBox();
-        loginBox.getChildren().addAll(staticLabels.get("logIn"), inputFields.get("identifier"), inputFields.get("logInPassword"), loginPromptBox, gameEnterButtons.get("logIn"), gameEnterButtons.get("toHomeFromLogIn"));
-        loginBox.setAlignment(Pos.CENTER);
-        loginBox.setSpacing(20);
-        loginBox.setStyle("-fx-background-color: #A9A9A9;");
-        Scene loginScene = new Scene(loginBox, screenWidth, screenHeight);//scene for login
+        Scene loginScene = new Scene(boxes.get("logIn"), screenWidth, screenHeight);//scene for login
         gameQuitButtons.get("logout").setOnAction(event -> {//action of logout button
             ServiceCaller.updatePet(pet.getId(),
                     (int) (progressBars.get("hunger").getProgress() * 100),
@@ -123,15 +108,7 @@ public class ClientApplication extends Application {
             primaryStage.setMaximized(false);
             primaryStage.show();
         });
-        HBox homeBox = new HBox();
-        homeBox.setAlignment(Pos.CENTER);
-        homeBox.setSpacing(20);
-        homeBox.setStyle("-fx-background-image: url('/Items/gameCover.png'); -fx-background-size: cover; -fx-background-position: center center;");
-        HBox homeButtonBox = new HBox();
-        homeButtonBox.getChildren().addAll(gameEnterButtons.get("toLogIn"), gameEnterButtons.get("toSignUp"));
-        homeButtonBox.setTranslateY(500);
-        homeBox.getChildren().add(homeButtonBox);
-        Scene homeScene = new Scene(homeBox, screenWidth, screenHeight); // scene for home
+        Scene homeScene = new Scene(boxes.get("home"), screenWidth, screenHeight); // scene for home
         gameEnterButtons.get("toHomeFromLogIn").setOnAction(event -> { // action of home button
             primaryStage.setScene(homeScene);
             primaryStage.setTitle("Home");
@@ -146,47 +123,6 @@ public class ClientApplication extends Application {
             primaryStage.setMaximized(false);
             primaryStage.show();
         });
-
-        // Create a top box and add the progress bars to it
-        HBox topStateBarBox = new HBox();
-        topStateBarBox.getChildren().addAll(imageViews.get("heart"),
-                progressBars.get("happiness"),
-                imageViews.get("fish"),
-                progressBars.get("hunger"),
-                imageViews.get("soap"),
-                progressBars.get("cleanness"));
-        topStateBarBox.setAlignment(Pos.TOP_CENTER);
-        topStateBarBox.setSpacing(50);
-        topStateBarBox.setPadding(new Insets(30, 0, 0, 0));
-        topStateBarBox.setStyle("-fx-background-color: #A9A9A9;");
-
-        // Create a top box and add the labels to it
-        HBox userInfoBox = new HBox();
-        userInfoBox.getChildren().addAll(gameAreaLabels.get("name"), gameAreaLabels.get("score"));
-        userInfoBox.setAlignment(Pos.CENTER);
-        userInfoBox.setSpacing(300);
-        userInfoBox.setPadding(new Insets(10, 0, 0, 0));
-        userInfoBox.setStyle("-fx-background-color: #A9A9A9;");
-
-        // Create center box and add the cat image to it
-        VBox centerCatBox = new VBox();
-        centerCatBox.setAlignment(Pos.CENTER);
-        centerCatBox.setStyle("-fx-background-color: #A9A9A9;");
-        centerCatBox.getChildren().add(catImageView);
-
-        // Create right box and add the buttons to it
-        VBox rightButtonBox = new VBox();
-        rightButtonBox.getChildren().addAll(gameQuitButtons.get("logout"), gameQuitButtons.get("exit"));
-        rightButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
-        rightButtonBox.setStyle("-fx-background-color: #A9A9A9;");
-
-        //Create a left box and add the buttons to it
-        VBox leftButtonBox = new VBox();
-        leftButtonBox.getChildren().addAll(petInteractionButtons.get("play"),
-                petInteractionButtons.get("wash"),
-                petInteractionButtons.get("feed"));
-        leftButtonBox.setAlignment(Pos.BOTTOM_LEFT);
-        leftButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
         //a timeline for default cat animation
         catAnimations.get("idle").play();
@@ -271,11 +207,10 @@ public class ClientApplication extends Application {
 
         // Create a BorderPaneGame and add the buttonBoxes and stateBarBox to it
         BorderPane borderPaneGame = new BorderPane();
-        borderPaneGame.setTop(topStateBarBox);
-        borderPaneGame.setTop(new VBox(topStateBarBox, userInfoBox));
-        borderPaneGame.setLeft(leftButtonBox);
-        borderPaneGame.setRight(rightButtonBox);
-        borderPaneGame.setCenter(centerCatBox);
+        borderPaneGame.setTop(boxes.get("info"));
+        borderPaneGame.setLeft(boxes.get("petInteraction"));
+        borderPaneGame.setRight(boxes.get("gameQuit"));
+        borderPaneGame.setCenter(boxes.get("cat"));
 
         // Create a scene with the borderPane as root
         Scene gameScene = new Scene(borderPaneGame, screenWidth, screenHeight);
