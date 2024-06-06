@@ -42,6 +42,7 @@ public class ClientApplication extends Application {
         Map<String, Label> staticLabels = ClientApplicationBuilder.createStaticLabels(font);
         Map<String, Hyperlink> hyperlinks = ClientApplicationBuilder.createHyperlinks(font);
         Map<String, TextField> inputFields = ClientApplicationBuilder.createInputFields(font);
+        Map<String, Button> gameEnterButtons = ClientApplicationBuilder.createGameEnterButtons(this, font);
 
         gameQuitButtons.get("exit").setOnAction(event -> {
             ServiceCaller.updatePet(pet.getId(),
@@ -52,23 +53,17 @@ public class ClientApplication extends Application {
         });
 
         //login fields
-        Button loginButton = new Button("Login");
-        loginButton.setFont(font);
-        Button homeButton = new Button("Home");
-        homeButton.setFont(font);
         HBox loginPromptBox = new HBox();
         loginPromptBox.getChildren().addAll(staticLabels.get("noAccount?"), hyperlinks.get("toSignUp"));
         loginPromptBox.setAlignment(Pos.CENTER);
 
 
         //register fields
-        Button registerButton = new Button("Register");
-        registerButton.setFont(font);
         HBox registerPromptBox = new HBox();
         registerPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"), hyperlinks.get("toLogIn"));
         registerPromptBox.setAlignment(Pos.CENTER);
         VBox registerBox = new VBox();
-        registerBox.getChildren().addAll(staticLabels.get("signUp"), inputFields.get("username"), inputFields.get("signUpPassword"), inputFields.get("petName"), inputFields.get("email"), registerPromptBox, registerButton, homeButton);
+        registerBox.getChildren().addAll(staticLabels.get("signUp"), inputFields.get("username"), inputFields.get("signUpPassword"), inputFields.get("petName"), inputFields.get("email"), registerPromptBox, gameEnterButtons.get("signUp"), gameEnterButtons.get("toHomeFromSignUp"));
         registerBox.setAlignment(Pos.CENTER);
         registerBox.setSpacing(20);
         registerBox.setStyle("-fx-background-color: #A9A9A9;");
@@ -85,7 +80,7 @@ public class ClientApplication extends Application {
 
         // Create a login box/scene and add the login fields to it
         VBox loginBox = new VBox();
-        loginBox.getChildren().addAll(staticLabels.get("logIn"), inputFields.get("identifier"), inputFields.get("logInPassword"), loginPromptBox, loginButton, homeButton);
+        loginBox.getChildren().addAll(staticLabels.get("logIn"), inputFields.get("identifier"), inputFields.get("logInPassword"), loginPromptBox, gameEnterButtons.get("logIn"), gameEnterButtons.get("toHomeFromLogIn"));
         loginBox.setAlignment(Pos.CENTER);
         loginBox.setSpacing(20);
         loginBox.setStyle("-fx-background-color: #A9A9A9;");
@@ -113,13 +108,7 @@ public class ClientApplication extends Application {
         });
 
         // Create a new scene for the home page
-        Image toLoginImage = new Image(getClass().getResourceAsStream("/Buttons/loginBttn.png"));
-        ImageView toLoginImageView = new ImageView(toLoginImage);
-        toLoginImageView.setFitWidth(150);
-        toLoginImageView.setFitHeight(150);
-        Button toLoginButton = new Button("", toLoginImageView);
-        toLoginButton.setStyle("-fx-background-color: transparent;");
-        toLoginButton.setOnAction(event -> {
+        gameEnterButtons.get("toLogIn").setOnAction(event -> {
             primaryStage.setScene(loginScene);
             primaryStage.setTitle("Login");
             primaryStage.setResizable(false);
@@ -127,13 +116,7 @@ public class ClientApplication extends Application {
             primaryStage.show();
         });
 
-        Image toRegisterImage = new Image(getClass().getResourceAsStream("/Buttons/createAccBttn.png"));
-        ImageView toRegisterImageView = new ImageView(toRegisterImage);
-        toRegisterImageView.setFitWidth(250);
-        toRegisterImageView.setFitHeight(150);
-        Button toRegisterButton = new Button("", toRegisterImageView);
-        toRegisterButton.setStyle("-fx-background-color: transparent;");
-        toRegisterButton.setOnAction(event -> {
+        gameEnterButtons.get("toSignUp").setOnAction(event -> {
             primaryStage.setScene(registerScene);
             primaryStage.setTitle("Create Account");
             primaryStage.setResizable(false);
@@ -145,11 +128,18 @@ public class ClientApplication extends Application {
         homeBox.setSpacing(20);
         homeBox.setStyle("-fx-background-image: url('/Items/gameCover.png'); -fx-background-size: cover; -fx-background-position: center center;");
         HBox homeButtonBox = new HBox();
-        homeButtonBox.getChildren().addAll(toLoginButton, toRegisterButton);
+        homeButtonBox.getChildren().addAll(gameEnterButtons.get("toLogIn"), gameEnterButtons.get("toSignUp"));
         homeButtonBox.setTranslateY(500);
         homeBox.getChildren().add(homeButtonBox);
         Scene homeScene = new Scene(homeBox, screenWidth, screenHeight); // scene for home
-        homeButton.setOnAction(event -> { // action of home button
+        gameEnterButtons.get("toHomeFromLogIn").setOnAction(event -> { // action of home button
+            primaryStage.setScene(homeScene);
+            primaryStage.setTitle("Home");
+            primaryStage.setResizable(false);
+            primaryStage.setMaximized(false);
+            primaryStage.show();
+        });
+        gameEnterButtons.get("toHomeFromSignUp").setOnAction(event -> { // action of home button
             primaryStage.setScene(homeScene);
             primaryStage.setTitle("Home");
             primaryStage.setResizable(false);
@@ -295,7 +285,7 @@ public class ClientApplication extends Application {
         primaryStage.setMaximized(false);
         primaryStage.show();
 
-        loginButton.setOnAction(event -> {
+        gameEnterButtons.get("logIn").setOnAction(event -> {
             String identifier = inputFields.get("identifier").getText();
             String password = inputFields.get("logInPassword").getText();
             Result<User> loginResult = ServiceCaller.logIn(identifier, password);
@@ -318,15 +308,15 @@ public class ClientApplication extends Application {
             }
         });
 
-        registerButton.setOnAction(event -> {
+        gameEnterButtons.get("signUp").setOnAction(event -> {
             String username = inputFields.get("username").getText();
-            String password = inputFields.get("signInPassword").getText();
+            String password = inputFields.get("signUpPassword").getText();
             String email = inputFields.get("email").getText();
             String petName = inputFields.get("petName").getText();
             Result<User> registerResult = ServiceCaller.signUp(username, email, password, petName);
             if (registerResult.isSuccess()) {
                 inputFields.get("username").clear();
-                inputFields.get("signInPassword").clear();
+                inputFields.get("signUpPassword").clear();
                 inputFields.get("email").clear();
                 inputFields.get("petName").clear();
                 user = registerResult.getData();

@@ -218,4 +218,38 @@ public abstract class ClientApplicationBuilder {
         }
         return inputFields;
     }
+
+    public static Map<String, Button> createGameEnterButtons(ClientApplication clientApplication, Font font) {
+        Map<String, Button> gameEnterButtons = new HashMap<>();
+        gameEnterButtons.put("logIn", new Button("Login"));
+        gameEnterButtons.put("signUp", new Button("Register"));
+
+        Image toLoginImage = new Image(clientApplication
+                .getClass()
+                .getResourceAsStream("/Buttons/loginBttn.png"));
+        ImageView toLoginImageView = new ImageView(toLoginImage);
+        toLoginImageView.setFitWidth(150);
+        toLoginImageView.setFitHeight(150);
+        Button toLoginButton = new Button("", toLoginImageView);
+        toLoginButton.setStyle("-fx-background-color: transparent;");
+        gameEnterButtons.put("toLogIn", toLoginButton);
+
+
+        Image toRegisterImage = new Image(clientApplication
+                .getClass()
+                .getResourceAsStream("/Buttons/createAccBttn.png"));
+        ImageView toRegisterImageView = new ImageView(toRegisterImage);
+        toRegisterImageView.setFitWidth(250);
+        toRegisterImageView.setFitHeight(150);
+        Button toRegisterButton = new Button("", toRegisterImageView);
+        toRegisterButton.setStyle("-fx-background-color: transparent;");
+        gameEnterButtons.put("toSignUp", toRegisterButton);
+
+        gameEnterButtons.put("toHomeFromLogIn", new Button("Home"));
+        gameEnterButtons.put("toHomeFromSignUp", new Button("Home"));
+        for (Button button : gameEnterButtons.values()) {
+            button.setFont(font);
+        }
+        return gameEnterButtons;
+    }
 }
