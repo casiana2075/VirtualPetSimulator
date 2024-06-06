@@ -1,6 +1,5 @@
 package org.example;
 
-import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -15,7 +14,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.entities.Pet;
@@ -41,6 +39,7 @@ public class ClientApplication extends Application {
         Map<String, Button> gameQuitButtons = ClientApplicationBuilder.createGameQuitButtons(this);
         ImageView catImageView = ClientApplicationBuilder.createCatImageView(this);
         Map<String, Timeline> catAnimations = ClientApplicationBuilder.createCatAnimations(this, catImageView);
+        Map<String, Label> staticLabels = ClientApplicationBuilder.createStaticLabels(this, font);
 
         gameQuitButtons.get("exit").setOnAction(event -> {
             ServiceCaller.updatePet(pet.getId(),
@@ -51,8 +50,6 @@ public class ClientApplication extends Application {
         });
 
         //login fields
-        Label loginTitleLabel = new Label("Please login to see your beloved pet!");
-        loginTitleLabel.setFont(font);
         TextField loginUsernameField = new TextField();
         loginUsernameField.setPromptText("Username");
         loginUsernameField.setFont(font);
@@ -63,18 +60,14 @@ public class ClientApplication extends Application {
         loginButton.setFont(font);
         Button homeButton = new Button("Home");
         homeButton.setFont(font);
-        Label promptLabel = new Label("...or you don't have an account? ");
-        promptLabel.setFont(font);
         Hyperlink registerLink = new Hyperlink("Register here");
         registerLink.setFont(font);
         HBox loginPromptBox = new HBox();
-        loginPromptBox.getChildren().addAll(promptLabel, registerLink);
+        loginPromptBox.getChildren().addAll(staticLabels.get("noAccount?"), registerLink);
         loginPromptBox.setAlignment(Pos.CENTER);
 
 
         //register fields
-        Label registerTitleLabel = new Label("Create an account to have a lovely pet!");
-        registerTitleLabel.setFont(font);
         TextField registerUsernameField = new TextField();
         registerUsernameField.setPromptText("Username");
         registerUsernameField.setFont(font);
@@ -89,19 +82,17 @@ public class ClientApplication extends Application {
         registerEmailField.setFont(font);
         Button registerButton = new Button("Register");
         registerButton.setFont(font);
-        Label registerPromptLabel = new Label("...or you already have an account? ");
-        registerPromptLabel.setFont(font);
         Hyperlink loginLink = new Hyperlink("Login here");
         loginLink.setFont(font);
         HBox registerPromptBox = new HBox();
-        registerPromptBox.getChildren().addAll(registerPromptLabel, loginLink);
+        registerPromptBox.getChildren().addAll(staticLabels.get("alreadyAccount?"), loginLink);
         registerPromptBox.setAlignment(Pos.CENTER);
         VBox registerBox = new VBox();
         registerUsernameField.setMaxWidth(300);
         registerPasswordField.setMaxWidth(300);
         registerPetNameField.setMaxWidth(300);
         registerEmailField.setMaxWidth(300);
-        registerBox.getChildren().addAll(registerTitleLabel, registerUsernameField, registerPasswordField, registerPetNameField, registerEmailField, registerPromptBox, registerButton, homeButton);
+        registerBox.getChildren().addAll(staticLabels.get("signUp"), registerUsernameField, registerPasswordField, registerPetNameField, registerEmailField, registerPromptBox, registerButton, homeButton);
         registerBox.setAlignment(Pos.CENTER);
         registerBox.setSpacing(20);
         registerBox.setStyle("-fx-background-color: #A9A9A9;");
@@ -120,7 +111,7 @@ public class ClientApplication extends Application {
         VBox loginBox = new VBox();
         loginUsernameField.setMaxWidth(300);
         loginPasswordField.setMaxWidth(300);
-        loginBox.getChildren().addAll(loginTitleLabel,loginUsernameField, loginPasswordField, loginPromptBox, loginButton, homeButton);
+        loginBox.getChildren().addAll(staticLabels.get("logIn"),loginUsernameField, loginPasswordField, loginPromptBox, loginButton, homeButton);
         loginBox.setAlignment(Pos.CENTER);
         loginBox.setSpacing(20);
         loginBox.setStyle("-fx-background-color: #A9A9A9;");

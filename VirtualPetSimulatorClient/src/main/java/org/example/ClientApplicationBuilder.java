@@ -164,4 +164,16 @@ public abstract class ClientApplicationBuilder {
         catAnimations.put("playing", AnimationBuilder.createPlayingAnimation(clientApplication, catImageView));
         return catAnimations;
     }
+
+    public static Map<String, Label> createStaticLabels(ClientApplication clientApplication, Font font) {
+        Map<String, Label> staticLabels = new HashMap<>();
+        staticLabels.put("logIn", new Label("Please login to see your beloved pet!"));
+        staticLabels.put("noAccount?", new Label("...or you don't have an account?"));
+        staticLabels.put("signUp", new Label("Create an account to have a lovely pet!"));
+        staticLabels.put("alreadyAccount?", new Label("...or you already have an account?"));
+        for (Label label : staticLabels.values()) {
+            label.setFont(font);
+        }
+        return staticLabels;
+    }
 }
