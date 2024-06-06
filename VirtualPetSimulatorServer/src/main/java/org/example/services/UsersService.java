@@ -49,4 +49,8 @@ public class UsersService {
         user.setScore(user.getScore() + score);
         return usersRepository.save(user);
     }
+
+    public void deleteById(int id) {
+        usersRepository.deleteById(id);
+    }
 }
