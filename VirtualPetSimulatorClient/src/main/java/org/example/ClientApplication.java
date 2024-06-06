@@ -38,55 +38,17 @@ public class ClientApplication extends Application {
         Font font = ClientApplicationBuilder.loadFont(this);
         Map<String, Label> gameAreaLabels = ClientApplicationBuilder.createGameAreaLabels(this, font);
         Map<String, Button> petInteractionButtons = ClientApplicationBuilder.createPetInteractionButtons(this);
+        Map<String, Button> gameQuitButtons = ClientApplicationBuilder.createGameQuitButtons(this);
+        ImageView catImageView = ClientApplicationBuilder.createCatImageView(this);
+        Map<String, Timeline> catAnimations = ClientApplicationBuilder.createCatAnimations(this, catImageView);
 
-        // Right button box
-        Image exitImage = new Image(getClass().getResourceAsStream("/Buttons/exitBttn.png"));
-        ImageView exitImageView = new ImageView(exitImage);
-        Image logoutImage = new Image(getClass().getResourceAsStream("/Buttons/logoutBttn.png"));
-        ImageView logoutImageView = new ImageView(logoutImage);
-
-        exitImageView.setFitWidth(150);
-        exitImageView.setFitHeight(150);
-        logoutImageView.setFitWidth(150);
-        logoutImageView.setFitHeight(150);
-
-        Button exitButton = new Button("", exitImageView);
-        Button logoutButton = new Button("", logoutImageView);
-
-        exitButton.setStyle("-fx-background-color: transparent;");
-        logoutButton.setStyle("-fx-background-color: transparent;");
-
-        exitButton.setOnMouseEntered(event -> {
-            exitImageView.setFitWidth(170);
-            exitImageView.setFitHeight(170);
-        });
-        exitButton.setOnMouseExited(event -> {
-            exitImageView.setFitWidth(150);
-            exitImageView.setFitHeight(150);
-        });
-        exitButton.setOnAction(event -> {
+        gameQuitButtons.get("exit").setOnAction(event -> {
             ServiceCaller.updatePet(pet.getId(),
                     (int) (progressBars.get("hunger").getProgress() * 100),
                     (int) (progressBars.get("happiness").getProgress() * 100),
                     (int) (progressBars.get("cleanness").getProgress() * 100));
             Platform.exit();
         });
-
-        logoutButton.setOnMouseEntered(event -> {
-            logoutImageView.setFitWidth(170);
-            logoutImageView.setFitHeight(170);
-        });
-        logoutButton.setOnMouseExited(event -> {
-            logoutImageView.setFitWidth(150);
-            logoutImageView.setFitHeight(150);
-        });
-
-        // Center Cat Box
-        Image catTailUpImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailUp.png"));
-        Image catTailDownImage = new Image(getClass().getResourceAsStream("/CatAnimations/catTailDown.png"));
-        ImageView catImageView = new ImageView(catTailUpImage);
-        catImageView.setFitWidth(550);
-        catImageView.setFitHeight(550);
 
         //login fields
         Label loginTitleLabel = new Label("Please login to see your beloved pet!");
@@ -163,7 +125,7 @@ public class ClientApplication extends Application {
         loginBox.setSpacing(20);
         loginBox.setStyle("-fx-background-color: #A9A9A9;");
         Scene loginScene = new Scene(loginBox, screenWidth, screenHeight);//scene for login
-        logoutButton.setOnAction(event -> {//action of logout button
+        gameQuitButtons.get("logout").setOnAction(event -> {//action of logout button
             ServiceCaller.updatePet(pet.getId(),
                     (int) (progressBars.get("hunger").getProgress() * 100),
                     (int) (progressBars.get("happiness").getProgress() * 100),
@@ -259,7 +221,7 @@ public class ClientApplication extends Application {
 
         // Create right box and add the buttons to it
         VBox rightButtonBox = new VBox();
-        rightButtonBox.getChildren().addAll(logoutButton, exitButton);
+        rightButtonBox.getChildren().addAll(gameQuitButtons.get("logout"), gameQuitButtons.get("exit"));
         rightButtonBox.setAlignment(Pos.BOTTOM_RIGHT);
         rightButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
@@ -272,27 +234,14 @@ public class ClientApplication extends Application {
         leftButtonBox.setStyle("-fx-background-color: #A9A9A9;");
 
         //a timeline for default cat animation
-        Timeline catAnimation = new Timeline(
-                new KeyFrame(Duration.seconds(1.0), event -> catImageView.setImage(catTailUpImage)),
-                new KeyFrame(Duration.seconds(1.5), event -> catImageView.setImage(catTailDownImage))
-        );
-        catAnimation.setCycleCount(Timeline.INDEFINITE);
-        catAnimation.play();
+        catAnimations.get("idle").play();
 
-        //feed animation
-        Image catEating1Image = new Image(getClass().getResourceAsStream("/CatAnimations/catEating1.png"));
-        Image catEating2Image = new Image(getClass().getResourceAsStream("/CatAnimations/catEating2.png"));
-        Timeline catEatingAnimation = new Timeline(
-                new KeyFrame(Duration.seconds(0.7), event -> catImageView.setImage(catEating1Image)),
-                new KeyFrame(Duration.seconds(1.0), event -> catImageView.setImage(catEating2Image))
-        );
-        catEatingAnimation.setCycleCount(5);
         petInteractionButtons.get("feed").setOnAction(event -> {
             petInteractionButtons.get("feed").setDisable(true);
             petInteractionButtons.get("wash").setDisable(true);
             petInteractionButtons.get("play").setDisable(true);
-            catAnimation.pause();
-            catEatingAnimation.play();
+            catAnimations.get("idle").pause();
+            catAnimations.get("eating").play();
             if (progressBars.get("hunger").getProgress() < 1.0) {
                 progressBars.get("hunger").setProgress(progressBars.get("hunger").getProgress() + 0.3);
                 ServiceCaller.updatePet(pet.getId(),
@@ -306,31 +255,19 @@ public class ClientApplication extends Application {
                 }
             }
         });
-        catEatingAnimation.setOnFinished(event -> {
-            catAnimation.play();
+        catAnimations.get("eating").setOnFinished(event -> {
+            catAnimations.get("idle").play();
             petInteractionButtons.get("feed").setDisable(false);
             petInteractionButtons.get("wash").setDisable(false);
             petInteractionButtons.get("play").setDisable(false);
         });
 
-        //wash animation
-        Image catBath1Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath1.png"));
-        Image catBath2Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath2.png"));
-        Image catBath3Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath3.png"));
-        Image catBath4Image = new Image(getClass().getResourceAsStream("/CatAnimations/catBath3.1.png"));
-        Timeline catWashAnimation = new Timeline(
-                new KeyFrame(Duration.seconds(0.0), event -> catImageView.setImage(catBath1Image)),
-                new KeyFrame(Duration.seconds(0.5), event -> catImageView.setImage(catBath2Image)),
-                new KeyFrame(Duration.seconds(1.5), event -> catImageView.setImage(catBath3Image)),
-                new KeyFrame(Duration.seconds(2.5), event -> catImageView.setImage(catBath4Image))
-        );
-        catWashAnimation.setCycleCount(3);
         petInteractionButtons.get("wash").setOnAction(event -> {
             petInteractionButtons.get("feed").setDisable(true);
             petInteractionButtons.get("wash").setDisable(true);
             petInteractionButtons.get("play").setDisable(true);
-            catAnimation.pause();
-            catWashAnimation.play();
+            catAnimations.get("idle").pause();
+            catAnimations.get("washing").play();
             if (progressBars.get("cleanness").getProgress() < 1.0) {
                 progressBars.get("cleanness").setProgress(progressBars.get("cleanness").getProgress() + 0.3);
                 ServiceCaller.updatePet(pet.getId(),
@@ -344,37 +281,19 @@ public class ClientApplication extends Application {
                 }
             }
         });
-        catWashAnimation.setOnFinished(event -> {
-            catAnimation.play();
+        catAnimations.get("washing").setOnFinished(event -> {
+            catAnimations.get("idle").play();
             petInteractionButtons.get("feed").setDisable(false);
             petInteractionButtons.get("wash").setDisable(false);
             petInteractionButtons.get("play").setDisable(false);
         });
 
-        //play animation
-        Image catPlay1Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying1.png"));
-        Image catPlay2Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying2.png"));
-        Image catPlay3Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying3.png"));
-        Image catPlay4Image = new Image(getClass().getResourceAsStream("/CatAnimations/catPlaying4.png"));
-        Timeline catPlayAnimation = new Timeline(
-                new KeyFrame(Duration.seconds(0.0), event -> catImageView.setImage(catPlay1Image)),
-                new KeyFrame(Duration.seconds(1.0), event -> catImageView.setImage(catPlay2Image)),
-                new KeyFrame(Duration.seconds(2.0), event -> catImageView.setImage(catPlay3Image)),
-                new KeyFrame(Duration.seconds(2.5), event -> catImageView.setImage(catPlay4Image)),
-                new KeyFrame(Duration.seconds(3.0), event -> catImageView.setImage(catPlay3Image)),
-                new KeyFrame(Duration.seconds(3.5), event -> catImageView.setImage(catPlay4Image)),
-                new KeyFrame(Duration.seconds(4.0), event -> catImageView.setImage(catPlay3Image)),
-                new KeyFrame(Duration.seconds(4.5), event -> catImageView.setImage(catPlay4Image)),
-                new KeyFrame(Duration.seconds(5.0), event -> catImageView.setImage(catPlay3Image)),
-                new KeyFrame(Duration.seconds(5.5), event -> catImageView.setImage(catPlay4Image))
-        );
-        catPlayAnimation.setCycleCount(1);
         petInteractionButtons.get("play").setOnAction(event -> {
             petInteractionButtons.get("feed").setDisable(true);
             petInteractionButtons.get("wash").setDisable(true);
             petInteractionButtons.get("play").setDisable(true);
-            catAnimation.pause();
-            catPlayAnimation.play();
+            catAnimations.get("idle").pause();
+            catAnimations.get("playing").play();
             if (progressBars.get("happiness").getProgress() < 1.0) {
                 progressBars.get("happiness").setProgress(progressBars.get("happiness").getProgress() + 0.3);
                 ServiceCaller.updatePet(pet.getId(),
@@ -388,8 +307,8 @@ public class ClientApplication extends Application {
                 }
             }
         });
-        catPlayAnimation.setOnFinished(event -> {
-            catAnimation.play();
+        catAnimations.get("playing").setOnFinished(event -> {
+            catAnimations.get("idle").play();
             petInteractionButtons.get("feed").setDisable(false);
             petInteractionButtons.get("wash").setDisable(false);
             petInteractionButtons.get("play").setDisable(false);

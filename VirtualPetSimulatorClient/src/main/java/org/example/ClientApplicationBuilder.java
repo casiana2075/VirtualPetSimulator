@@ -112,35 +112,56 @@ public abstract class ClientApplicationBuilder {
 
     public static Map<String, Button> createPetInteractionButtons(ClientApplication clientApplication) {
         Map<String, Button> petInteractionButtons = new HashMap<>();
-
-        Map<String, ImageView> imageViews = new HashMap<>();
-        imageViews.put("feed", initPetInteractionImageViews(clientApplication, "/Buttons/feedBttn.png"));
-        imageViews.put("play", initPetInteractionImageViews(clientApplication, "/Buttons/playBttn.png"));
-        imageViews.put("wash", initPetInteractionImageViews(clientApplication, "/Buttons/washBttn.png"));
-
-        for (Map.Entry<String, ImageView> entry : imageViews.entrySet()) {
-            Button button = new Button("", entry.getValue());
-            button.setStyle("-fx-background-color: transparent;");
-            petInteractionButtons.put(entry.getKey(), button);
-            button.setOnMouseEntered(event -> {
-                entry.getValue().setFitWidth(170);
-                entry.getValue().setFitHeight(170);
-            });
-            button.setOnMouseExited(event -> {
-                entry.getValue().setFitWidth(150);
-                entry.getValue().setFitHeight(150);
-            });
-        }
+        petInteractionButtons.put("feed", initGameAreaButton(clientApplication, "/Buttons/feedBttn.png"));
+        petInteractionButtons.put("play", initGameAreaButton(clientApplication, "/Buttons/playBttn.png"));
+        petInteractionButtons.put("wash", initGameAreaButton(clientApplication, "/Buttons/washBttn.png"));
         return petInteractionButtons;
     }
 
-    private static ImageView initPetInteractionImageViews(ClientApplication clientApplication, String path) {
+    public static Map<String, Button> createGameQuitButtons(ClientApplication clientApplication) {
+        Map<String, Button> gameQuitButtons = new HashMap<>();
+        gameQuitButtons.put("logout", initGameAreaButton(clientApplication, "/Buttons/logoutBttn.png"));
+        gameQuitButtons.put("exit", initGameAreaButton(clientApplication, "/Buttons/exitBttn.png"));
+        return gameQuitButtons;
+    }
+
+    private static Button initGameAreaButton(ClientApplication clientApplication, String iconPath) {
         Image image = new Image(clientApplication
                 .getClass()
-                .getResourceAsStream(path));
+                .getResourceAsStream(iconPath));
         ImageView imageView = new ImageView(image);
         imageView.setFitWidth(150);
         imageView.setFitHeight(150);
-        return imageView;
+
+        Button button = new Button("", imageView);
+        button.setStyle("-fx-background-color: transparent;");
+        button.setOnMouseEntered(event -> {
+            imageView.setFitWidth(170);
+            imageView.setFitHeight(170);
+        });
+        button.setOnMouseExited(event -> {
+            imageView.setFitWidth(150);
+            imageView.setFitHeight(150);
+        });
+        return button;
+    }
+
+    public static ImageView createCatImageView(ClientApplication clientApplication) {
+        Image catTailUpImage = new Image(clientApplication
+                .getClass()
+                .getResourceAsStream("/CatAnimations/catTailUp.png"));
+        ImageView catImageView = new ImageView(catTailUpImage);
+        catImageView.setFitWidth(550);
+        catImageView.setFitHeight(550);
+        return catImageView;
+    }
+
+    public static Map<String, Timeline> createCatAnimations(ClientApplication clientApplication, ImageView catImageView) {
+        Map<String, Timeline> catAnimations = new HashMap<>();
+        catAnimations.put("idle", AnimationBuilder.createIdleAnimation(clientApplication, catImageView));
+        catAnimations.put("eating", AnimationBuilder.createEatingAnimation(clientApplication, catImageView));
+        catAnimations.put("washing", AnimationBuilder.createWashingAnimation(clientApplication, catImageView));
+        catAnimations.put("playing", AnimationBuilder.createPlayingAnimation(clientApplication, catImageView));
+        return catAnimations;
     }
 }
