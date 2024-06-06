@@ -33,6 +33,14 @@ public class UsersService {
         return Result.failure("UserNotFound");
     }
 
+    public Result<User> findById(int id) {
+        User user = usersRepository.findById(id).orElse(null);
+        if (user != null) {
+            return Result.success(user);
+        }
+        return Result.failure("UserNotFound");
+    }
+
     public User updateScore(int userId, int score) {
         User user = usersRepository.findById(userId).orElse(null);
         if (user == null) {

@@ -19,7 +19,7 @@ public class PetsController {
     }
 
     @PatchMapping("/save")
-    public @ResponseBody Result<Pet> save(@RequestParam int petId,
+    public @ResponseBody Result<Integer> save(@RequestParam int petId,
                             @RequestParam int currentHunger,
                             @RequestParam int currentHappiness,
                             @RequestParam int currentCleanness) {

@@ -25,17 +25,27 @@ public class UsersController {
         Result<User> newUser = usersService.create(username, email, password);
         if (newUser.isSuccess()) {
             Pet pet = petsService.create(newUser.getData().getId(), petName);
+            return newUser;
         }
-        return newUser;
+        return Result.failure(newUser.getError());
     }
 
     @GetMapping("/log-in")
-    public @ResponseBody Result<Integer> logIn(@RequestParam String identifier, @RequestParam String password) {
+    public @ResponseBody Result<User> logIn(@RequestParam String identifier, @RequestParam String password) {
         Result<User> user = usersService.findByIdentifier(identifier);
         if (user.isSuccess() && user.getData().getPassword().equals(password)) {
-            return Result.success(user.getData().getId());
+            return user;
         } else {
             return Result.failure("InvalidCredentials");
         }
+    }
+
+    @GetMapping("/{id}/score")
+    public @ResponseBody Result<Integer> getScore(@PathVariable int id) {
+        Result<User> user = usersService.findById(id);
+        if (user.isSuccess()) {
+            return Result.success(user.getData().getScore());
+        }
+        return Result.failure("UserNotFound");
     }
 }

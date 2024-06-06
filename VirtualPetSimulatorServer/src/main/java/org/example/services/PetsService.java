@@ -50,7 +50,7 @@ public class PetsService {
         return new Integer[]{hungerDifference, happinessDifference, cleannessDifference};
     }
 
-    public Result<Pet> save(int petId, int currentHunger, int currentHappiness, int currentCleanness) {
+    public Result<Integer> save(int petId, int currentHunger, int currentHappiness, int currentCleanness) {
         Result<Pet> petResult = findById(petId);
         if (!petResult.isSuccess()) {
             return Result.failure(petResult.getError());
@@ -67,7 +67,8 @@ public class PetsService {
         pet.setHappiness(currentHappiness);
         pet.setCleanness(currentCleanness);
         pet.setLastUpdate(LocalDateTime.now());
+        petsRepository.save(pet);
 
-        return Result.success(petsRepository.save(pet));
+        return Result.success(scoreDifference);
     }
 }
