@@ -64,11 +64,11 @@ public abstract class FunctionalityBuilder {
         app.getGameEnterButtons().get("logIn").setOnAction(event -> {
             String identifier = app.getInputFields().get("identifier").getText();
             String password = app.getInputFields().get("logInPassword").getText();
-            Result<User> loginResult = ServiceCaller.logIn(identifier, password);
             if(identifier.isEmpty() || password.isEmpty()){
                 app.getLoginErrorMessage().setText("Write your username and password first");
                 app.getLoginErrorMessage().setVisible(true);
             }else{
+                Result<User> loginResult = ServiceCaller.logIn(identifier, password);
                 if (loginResult.isSuccess()) {
                     handleSuccessfulUserFetching(app, loginResult.getData());
                     Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
@@ -98,7 +98,6 @@ public abstract class FunctionalityBuilder {
             String password = app.getInputFields().get("signUpPassword").getText();
             String email = app.getInputFields().get("email").getText();
             String petName = app.getInputFields().get("petName").getText();
-            Result<User> registerResult = ServiceCaller.signUp(username, email, password, petName);
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || petName.isEmpty()) {
                 app.getSignUpErrorMessage().setText("All fields must be filled");
                 app.getSignUpErrorMessage().setVisible(true);
@@ -106,6 +105,7 @@ public abstract class FunctionalityBuilder {
                 app.getSignUpErrorMessage().setText("Invalid email format");
                 app.getSignUpErrorMessage().setVisible(true);
             } else {
+                Result<User> registerResult = ServiceCaller.signUp(username, email, password, petName);
                 app.getSignUpErrorMessage().setVisible(false);
                 if (registerResult.isSuccess()) {
                 handleSuccessfulUserFetching(app, registerResult.getData());
