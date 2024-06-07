@@ -1,7 +1,6 @@
 package org.example.appbuilders;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import org.example.ClientApplication;
@@ -9,9 +8,10 @@ import org.example.Result;
 import org.example.ServiceCaller;
 import org.example.entities.Pet;
 import org.example.entities.User;
-
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public abstract class FunctionalityBuilder {
     private static final Map<String, String> buttonToAnimation = new HashMap<>() {{
@@ -86,8 +86,7 @@ public abstract class FunctionalityBuilder {
                         System.out.println("An error occurred while retrieving your adorable pet: " + petResult.getError());
                     }
                 } else {
-                    String loginErrorMessage = camelCaseToSentence(loginResult.getError());
-                    app.getLoginErrorMessage().setText(loginErrorMessage);
+                    app.getLoginErrorMessage().setText(loginResult.getError());
                     app.getLoginErrorMessage().setVisible(true);
                     System.out.println("An error occurred while logging in: " + loginResult.getError());
                 }
@@ -116,8 +115,7 @@ public abstract class FunctionalityBuilder {
                         System.out.println("An error occurred while retrieving your adorable pet: " + petResult.getError());
                     }
                 } else {
-                    String registerErrorMessage = camelCaseToSentence(registerResult.getError());
-                    app.getSignUpErrorMessage().setText(registerErrorMessage);
+                    app.getSignUpErrorMessage().setText(registerResult.getError());
                     app.getSignUpErrorMessage().setVisible(true);
                     System.out.println("An error occurred while creating your account: " + registerResult.getError());
                 }
@@ -126,17 +124,6 @@ public abstract class FunctionalityBuilder {
         app.getGameEnterButtons().get("homeExit").setOnAction(event -> {
             Platform.exit();
         });
-    }
-
-    public static String camelCaseToSentence(String camelCase) {
-        StringBuilder result = new StringBuilder();
-        for (char c : camelCase.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                result.append(" ");
-            }
-            result.append(c);
-        }
-        return result.toString();
     }
 
     private static void handleSuccessfulUserFetching(ClientApplication app, User user) {
@@ -158,6 +145,8 @@ public abstract class FunctionalityBuilder {
     }
 
     private static void addFunctionalityToGameQuitButtons(ClientApplication app, Stage primaryStage) {
+        Media byeCatSound = new Media(ClientApplication.class.getResource("/Sounds/byeCatSound.mp3").toString());
+        MediaPlayer byeCatMediaPlayer = new MediaPlayer(byeCatSound);
         app.getGameQuitButtons().get("exit").setOnAction(event -> {
             Result<Void> saveResult = ServiceCaller.savePet(app.getPet().getId(),
                     (int) (app.getProgressBars().get("hunger").getProgress() * 100),
@@ -170,6 +159,7 @@ public abstract class FunctionalityBuilder {
             }
         });
         app.getGameQuitButtons().get("logout").setOnAction(event -> {
+            byeCatMediaPlayer.play();
             Result<Void> saveResult = ServiceCaller.savePet(app.getPet().getId(),
                     (int) (app.getProgressBars().get("hunger").getProgress() * 100),
                     (int) (app.getProgressBars().get("happiness").getProgress() * 100),
@@ -189,6 +179,12 @@ public abstract class FunctionalityBuilder {
     }
 
     private static void addFunctionalityToPetInteractionButtons(ClientApplication app) {
+        Media playSound = new Media(ClientApplication.class.getResource("/Sounds/happySound.mp3").toString());
+        Media feedSound = new Media(ClientApplication.class.getResource("/Sounds/eatingSound.mp3").toString());
+        Media washSound = new Media(ClientApplication.class.getResource("/Sounds/bubbleBathSound.mp3").toString());
+        MediaPlayer playMediaPlayer = new MediaPlayer(playSound);
+        MediaPlayer feedMediaPlayer = new MediaPlayer(feedSound);
+        MediaPlayer washMediaPlayer = new MediaPlayer(washSound);
         for (String buttonName : app.getPetInteractionButtons().keySet()) {
             app.getPetInteractionButtons().get(buttonName).setOnAction(event -> {
                 setAllGameSceneButtonsState(app, true);
@@ -206,6 +202,13 @@ public abstract class FunctionalityBuilder {
                     } else {
                         System.out.println("An error occurred while updating your pet's stats: " + scoreDifference.getError());
                     }
+                }
+                if (buttonName.equals("play")) {
+                    playMediaPlayer.play();
+                } else if (buttonName.equals("feed")) {
+                    feedMediaPlayer.play();
+                } else if (buttonName.equals("wash")) {
+                    washMediaPlayer.play();
                 }
             });
         }
