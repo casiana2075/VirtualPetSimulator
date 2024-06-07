@@ -233,7 +233,6 @@ public abstract class UserInterfaceBuilder {
         toLoginButton.setStyle("-fx-background-color: transparent;");
         gameEnterButtons.put("toLogIn", toLoginButton);
 
-
         Image toRegisterImage = new Image(app
                 .getClass()
                 .getResourceAsStream("/Buttons/createAccBttn.png"));
@@ -244,8 +243,19 @@ public abstract class UserInterfaceBuilder {
         toRegisterButton.setStyle("-fx-background-color: transparent;");
         gameEnterButtons.put("toSignUp", toRegisterButton);
 
+        Image exitImage = new Image(app
+                .getClass()
+                .getResourceAsStream("/Buttons/exitBttn.png"));
+        ImageView exitImageView = new ImageView(exitImage);
+        exitImageView.setFitWidth(150);
+        exitImageView.setFitHeight(150);
+        Button exitButton = new Button("", exitImageView);
+        exitButton.setStyle("-fx-background-color: transparent;");
+        gameEnterButtons.put("homeExit", exitButton);
+
         gameEnterButtons.put("toHomeFromLogIn", new Button("Home"));
         gameEnterButtons.put("toHomeFromSignUp", new Button("Home"));
+        gameEnterButtons.put("exitFromHome", new Button("Home"));
         for (Button button : gameEnterButtons.values()) {
             button.setFont(app.getFont());
         }
@@ -254,6 +264,18 @@ public abstract class UserInterfaceBuilder {
 
     public static void createBoxes(ClientApplication app) {
         Map<String, Pane> boxes = new HashMap<>();
+
+        Label loginErrorMessage = new Label("Incorrect username or password");
+        loginErrorMessage.setFont(app.getFont());
+        loginErrorMessage.setStyle("-fx-text-fill: red;");
+        loginErrorMessage.setVisible(false);
+        app.setLoginErrorMessage(loginErrorMessage);
+
+        Label signUpErrorMessage = new Label("");
+        signUpErrorMessage.setFont(app.getFont());
+        signUpErrorMessage.setStyle("-fx-text-fill: red;");
+        signUpErrorMessage.setVisible(false);
+        app.setSignUpErrorMessage(signUpErrorMessage);
 
         HBox logInPromptBox = new HBox();
         logInPromptBox.getChildren().addAll(app.getStaticLabels().get("noAccount?"),
@@ -274,6 +296,7 @@ public abstract class UserInterfaceBuilder {
                 app.getInputFields().get("petName"),
                 app.getInputFields().get("email"),
                 boxes.get("signUpPrompt"),
+                app.getSignUpErrorMessage(),
                 app.getGameEnterButtons().get("signUp"),
                 app.getGameEnterButtons().get("toHomeFromSignUp"));
         signUpBox.setAlignment(Pos.CENTER);
@@ -286,6 +309,7 @@ public abstract class UserInterfaceBuilder {
                 app.getInputFields().get("identifier"),
                 app.getInputFields().get("logInPassword"),
                 boxes.get("logInPrompt"),
+                app.getLoginErrorMessage(),
                 app.getGameEnterButtons().get("logIn"),
                 app.getGameEnterButtons().get("toHomeFromLogIn"));
         logInBox.setAlignment(Pos.CENTER);
@@ -295,8 +319,11 @@ public abstract class UserInterfaceBuilder {
 
         HBox homeButtonsBox = new HBox();
         homeButtonsBox.getChildren().addAll(app.getGameEnterButtons().get("toLogIn"),
-                app.getGameEnterButtons().get("toSignUp"));
-        homeButtonsBox.setTranslateY(500);
+                app.getGameEnterButtons().get("toSignUp"),
+                app.getGameEnterButtons().get("homeExit"));
+        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+        double translation = screenHeight - homeButtonsBox.getHeight() - 100;
+        homeButtonsBox.setTranslateY(translation);
         boxes.put("homeButtons", homeButtonsBox);
 
         HBox homeBox = new HBox();

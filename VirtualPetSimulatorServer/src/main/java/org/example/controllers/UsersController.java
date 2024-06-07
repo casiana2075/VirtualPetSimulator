@@ -24,8 +24,12 @@ public class UsersController {
         @RequestParam String petName) {
         Result<User> newUser = usersService.create(username, email, password);
         if (newUser.isSuccess()) {
-            Pet pet = petsService.create(newUser.getData().getId(), petName);
-            return newUser;
+            Result<Pet> pet = petsService.create(newUser.getData().getId(), petName);
+            if (pet.isSuccess()) {
+                return newUser;
+            }
+            usersService.deleteById(newUser.getData().getId());
+            return Result.failure(pet.getError());
         }
         return Result.failure(newUser.getError());
     }
@@ -34,9 +38,10 @@ public class UsersController {
     public @ResponseBody Result<User> logIn(@RequestParam String identifier, @RequestParam String password) {
         Result<User> user = usersService.findByIdentifier(identifier);
         if (user.isSuccess() && user.getData().getPassword().equals(password)) {
+            petsService.findByOwnerId(user.getData().getId());
             return user;
         } else {
-            return Result.failure("InvalidCredentials");
+            return Result.failure("Invalid username or password");
         }
     }
 
@@ -46,6 +51,6 @@ public class UsersController {
         if (user.isSuccess()) {
             return Result.success(user.getData().getScore());
         }
-        return Result.failure("UserNotFound");
+        return Result.failure("User not found");
     }
 }

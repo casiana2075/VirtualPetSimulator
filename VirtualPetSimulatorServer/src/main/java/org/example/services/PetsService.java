@@ -15,9 +15,14 @@ public class PetsService {
     @Autowired
     private UsersService usersService;
 
-    public Pet create(int ownerId, String name) {
-        Pet pet = new Pet(ownerId, name);
-        return petsRepository.save(pet);
+    public Result<Pet> create(int ownerId, String name) {
+        Pet pet = null;
+        try {
+            pet = petsRepository.save(new Pet(ownerId, name));
+        } catch (Exception e) {
+            return Result.failure("PetCreationFailed");
+        }
+        return Result.success(pet);
     }
 
     public Result<Pet> findById(int petId) {
@@ -35,6 +40,7 @@ public class PetsService {
         }
         int scoreDecrease = pet.applyStatsDecrease(getStatsDifference(pet));
         usersService.updateScore(pet.getOwnerId(), -scoreDecrease);
+        petsRepository.save(pet);
         return Result.success(pet);
     }
 
@@ -50,25 +56,45 @@ public class PetsService {
         return new Integer[]{hungerDifference, happinessDifference, cleannessDifference};
     }
 
-    public Result<Integer> save(int petId, int currentHunger, int currentHappiness, int currentCleanness) {
+    public Result<Void> save(int petId, int currentHunger, int currentHappiness, int currentCleanness) {
         Result<Pet> petResult = findById(petId);
         if (!petResult.isSuccess()) {
             return Result.failure(petResult.getError());
         }
         Pet pet = petResult.getData();
-        int scoreDifference = 0;
-        scoreDifference += Math.max(0, currentHunger - pet.getHunger());
-        scoreDifference += Math.max(0, currentHappiness - pet.getHappiness());
-        scoreDifference += Math.max(0, currentCleanness - pet.getCleanness());
-
-        usersService.updateScore(pet.getOwnerId(), scoreDifference);
-
         pet.setHunger(currentHunger);
         pet.setHappiness(currentHappiness);
         pet.setCleanness(currentCleanness);
         pet.setLastUpdate(LocalDateTime.now());
         petsRepository.save(pet);
 
+        return Result.success(null);
+    }
+
+    public Result<Integer> update(int petId, String stat, int value) {
+        Result<Pet> petResult = findById(petId);
+        if (!petResult.isSuccess()) {
+            return Result.failure(petResult.getError());
+        }
+        Pet pet = petResult.getData();
+        int scoreDifference = 0;
+        switch (stat) {
+            case "hunger":
+                scoreDifference = value - pet.getHunger();
+                pet.setHunger(value);
+                break;
+            case "happiness":
+                scoreDifference = value - pet.getHappiness();
+                pet.setHappiness(value);
+                break;
+            case "cleanness":
+                scoreDifference = value - pet.getCleanness();
+                pet.setCleanness(value);
+                break;
+        }
+        usersService.updateScore(pet.getOwnerId(), scoreDifference);
+        pet.setLastUpdate(LocalDateTime.now());
+        petsRepository.save(pet);
         return Result.success(scoreDifference);
     }
 }
