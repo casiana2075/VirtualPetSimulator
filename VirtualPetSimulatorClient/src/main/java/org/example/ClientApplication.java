@@ -23,6 +23,8 @@ public class ClientApplication extends Application {
     private Map<String, ProgressBar> progressBars;
     private Timeline progressBarsTimeline;
     private Font font;
+    private Label loginErrorMessage;
+    private Label signUpErrorMessage;
     private Map<String, Label> gameAreaLabels;
     private Map<String, Button> petInteractionButtons;
     private Map<String, Button> gameQuitButtons;
