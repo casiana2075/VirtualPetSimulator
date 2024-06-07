@@ -20,7 +20,7 @@ public class PetsService {
         try {
             pet = petsRepository.save(new Pet(ownerId, name));
         } catch (Exception e) {
-            return Result.failure("PetCreationFailed");
+            return Result.failure("Pet creation failed");
         }
         return Result.success(pet);
     }
@@ -28,7 +28,7 @@ public class PetsService {
     public Result<Pet> findById(int petId) {
         Pet pet = petsRepository.findById(petId).orElse(null);
         if (pet == null) {
-            return Result.failure("PetNotFound");
+            return Result.failure("Pet not found");
         }
         return Result.success(pet);
     }
@@ -36,7 +36,7 @@ public class PetsService {
     public Result<Pet> findByOwnerId(int ownerId) {
         Pet pet = petsRepository.findByOwnerId(ownerId);
         if (pet == null) {
-            return Result.failure("PetNotFound");
+            return Result.failure("Pet not found");
         }
         int scoreDecrease = pet.applyStatsDecrease(getStatsDifference(pet));
         usersService.updateScore(pet.getOwnerId(), -scoreDecrease);
