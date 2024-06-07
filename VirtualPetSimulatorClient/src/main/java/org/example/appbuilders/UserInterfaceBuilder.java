@@ -321,7 +321,9 @@ public abstract class UserInterfaceBuilder {
         homeButtonsBox.getChildren().addAll(app.getGameEnterButtons().get("toLogIn"),
                 app.getGameEnterButtons().get("toSignUp"),
                 app.getGameEnterButtons().get("homeExit"));
-        homeButtonsBox.setTranslateY(700);
+        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+        double translation = screenHeight - homeButtonsBox.getHeight() - 100;
+        homeButtonsBox.setTranslateY(translation);
         boxes.put("homeButtons", homeButtonsBox);
 
         HBox homeBox = new HBox();
