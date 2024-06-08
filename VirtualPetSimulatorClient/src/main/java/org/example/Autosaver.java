@@ -18,7 +18,7 @@ public final class Autosaver implements Runnable {
         Pet currentPet;
         while (true) {
             try {
-                Thread.sleep(timeInterval);
+                Thread.sleep(5000);
                 synchronized (app) {
                     currentUser = app.getCurrentUser();
                     currentPet = app.getCurrentPet();
@@ -26,11 +26,18 @@ public final class Autosaver implements Runnable {
                 if (currentUser == null || currentPet == null) {
                     continue;
                 }
+                synchronized (app) {
+                    app.getAutosavingLabel().setVisible(true);
+                }
                 Result<Void> saveResult = ServiceCaller.savePet(currentPet.getId(),
                         currentPet.getHunger(),
                         currentPet.getHappiness(),
                         currentPet.getCleanness(),
                         currentUser.getScore());
+                synchronized (app) {
+                    Thread.sleep(1000);
+                    app.getAutosavingLabel().setVisible(false);
+                }
                 if (saveResult.isSuccess()) {
                     System.out.println("Autosaver thread saved the game successfully.");
                 } else {

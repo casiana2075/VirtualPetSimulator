@@ -103,12 +103,18 @@ public abstract class UserInterfaceBuilder {
 
     public static void createGameAreaLabels(ClientApplication app) {
         Map<String, Label> gameAreaLabels = new HashMap<>();
+        Label autosavingLabel = new Label("Autosaving...");
+        autosavingLabel.setFont(app.getFont());
+        gameAreaLabels.put("autosaving", autosavingLabel);
+
         Label nameLabel = new Label("Name: " + app.getPet().getName());
         nameLabel.setFont(app.getFont());
         gameAreaLabels.put("name", nameLabel);
-        Label hungerLabel = new Label("Score: " + app.getUser().getScore());
-        hungerLabel.setFont(app.getFont());
-        gameAreaLabels.put("score", hungerLabel);
+
+        Label scoreLabel = new Label("Score: " + app.getUser().getScore());
+        scoreLabel.setFont(app.getFont());
+        gameAreaLabels.put("score", scoreLabel);
+
         app.setGameAreaLabels(gameAreaLabels);
     }
 
@@ -352,14 +358,14 @@ public abstract class UserInterfaceBuilder {
         boxes.put("stats", statsBox);
 
         HBox userInfoBox = new HBox();
-        userInfoBox.getChildren().addAll(app.getGameAreaLabels().get("name"),
+        userInfoBox.getChildren().addAll(app.getGameAreaLabels().get("autosaving"),
+                app.getGameAreaLabels().get("name"),
                 app.getGameAreaLabels().get("score"));
         userInfoBox.setAlignment(Pos.CENTER);
         userInfoBox.setSpacing(300);
         userInfoBox.setPadding(new Insets(10, 0, 0, 0));
         userInfoBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("nameAndScore", userInfoBox);
-
         VBox centerCatBox = new VBox();
         centerCatBox.setAlignment(Pos.CENTER);
         centerCatBox.setStyle("-fx-background-color: #A9A9A9;");

@@ -50,6 +50,10 @@ public class ClientApplication extends Application {
         return pet;
     }
 
+    public synchronized Label getAutosavingLabel() {
+        return gameAreaLabels.get("autosaving");
+    }
+
     private void buildUserInterface() {
         UserInterfaceBuilder.createStatsImageViews(this);
         UserInterfaceBuilder.createProgressBars(this);

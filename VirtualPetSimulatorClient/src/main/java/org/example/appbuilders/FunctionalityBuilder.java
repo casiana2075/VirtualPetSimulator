@@ -139,6 +139,7 @@ public abstract class FunctionalityBuilder {
         app.setPet(pet);
         primaryStage.setScene(app.getScenes().get("game"));
         primaryStage.setTitle("Virtual Pet Game");
+        app.getGameAreaLabels().get("autosaving").setVisible(false);
         app.getProgressBars().get("happiness").setProgress((double) pet.getHappiness() / 100);
         app.getProgressBars().get("hunger").setProgress((double) pet.getHunger() / 100);
         app.getProgressBars().get("cleanness").setProgress((double) pet.getCleanness() / 100);
