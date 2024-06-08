@@ -13,11 +13,4 @@ public final class User {
     private String password;
 
     private Integer score;
-
-    public User(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.score = 0;
-    }
 }

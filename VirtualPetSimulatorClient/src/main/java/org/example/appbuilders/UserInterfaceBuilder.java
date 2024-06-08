@@ -79,12 +79,15 @@ public abstract class UserInterfaceBuilder {
             double cleanness = app.getProgressBars().get("cleanness").getProgress();
             if (happiness > 0) {
                 app.getProgressBars().get("happiness").setProgress(happiness - 0.05);
+                app.getPet().setHappiness((int) (happiness * 100) - 5);
             }
             if (hunger > 0) {
                 app.getProgressBars().get("hunger").setProgress(hunger - 0.1);
+                app.getPet().setHunger((int) (hunger * 100) - 10);
             }
             if (cleanness > 0) {
                 app.getProgressBars().get("cleanness").setProgress(cleanness - 0.01);
+                app.getPet().setCleanness((int) (cleanness * 100) - 1);
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);

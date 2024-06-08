@@ -42,6 +42,14 @@ public class ClientApplication extends Application {
     private User user = new User();
     private Pet pet = new Pet();
 
+    public synchronized User getCurrentUser() {
+        return user;
+    }
+
+    public synchronized Pet getCurrentPet() {
+        return pet;
+    }
+
     private void buildUserInterface() {
         UserInterfaceBuilder.createStatsImageViews(this);
         UserInterfaceBuilder.createProgressBars(this);
@@ -75,11 +83,18 @@ public class ClientApplication extends Application {
         primaryStage.show();
     }
 
+    private void startAutosaver() {
+        Thread autosaverThread = new Thread(new Autosaver(this, 3));
+        autosaverThread.setDaemon(true);
+        autosaverThread.start();
+    }
+
     @Override
     public void start(Stage primaryStage) {
         buildUserInterface();
         addFunctionality(primaryStage);
         launchHomeScene(primaryStage);
+        startAutosaver();
     }
 
     public static void main(String[] args) {

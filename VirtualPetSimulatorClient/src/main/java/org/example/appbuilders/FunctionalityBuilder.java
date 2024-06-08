@@ -212,6 +212,7 @@ public abstract class FunctionalityBuilder {
                 app.getProgressBars().get("hunger").setProgress(
                         Math.min(1.0, app.getProgressBars().get("hunger").getProgress() + 0.3));
                 int newHunger = (int) (app.getProgressBars().get("hunger").getProgress() * 100);
+                app.getPet().setHunger(newHunger);
                 app.getProgressBars().get("cleanness").setProgress(
                         app.getProgressBars().get("cleanness").getProgress() - 0.1);
                 return newHunger - oldHunger;
@@ -221,6 +222,7 @@ public abstract class FunctionalityBuilder {
                 app.getProgressBars().get("cleanness").setProgress(
                         Math.min(1.0, app.getProgressBars().get("cleanness").getProgress() + 0.75));
                 int newCleanness = (int) (app.getProgressBars().get("cleanness").getProgress() * 100);
+                app.getPet().setCleanness(newCleanness);
                 app.getProgressBars().get("happiness").setProgress(
                         app.getProgressBars().get("happiness").getProgress() - 0.1);
                 return newCleanness - oldCleanness;
@@ -230,6 +232,7 @@ public abstract class FunctionalityBuilder {
                 app.getProgressBars().get("happiness").setProgress(
                         Math.min(1.0, app.getProgressBars().get("happiness").getProgress() + 0.3));
                 int newHappiness = (int) (app.getProgressBars().get("happiness").getProgress() * 100);
+                app.getPet().setHappiness(newHappiness);
                 app.getProgressBars().get("cleanness").setProgress(
                         app.getProgressBars().get("cleanness").getProgress() - 0.1);
                 return newHappiness - oldHappiness;
