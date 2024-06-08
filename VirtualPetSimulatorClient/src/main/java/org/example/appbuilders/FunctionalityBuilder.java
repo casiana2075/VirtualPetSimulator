@@ -62,8 +62,8 @@ public abstract class FunctionalityBuilder {
         });
 
         app.getGameEnterButtons().get("logIn").setOnAction(event -> {
-            String identifier = app.getInputFields().get("identifier").getText();
-            String password = app.getInputFields().get("logInPassword").getText();
+            String identifier = app.getInputFields().get("identifier").getText().toUpperCase();
+            String password = app.getInputFields().get("logInPassword").getText().toUpperCase();
             if(identifier.isEmpty() || password.isEmpty()){
                 app.getLoginErrorMessage().setText("Write your username and password first");
                 app.getLoginErrorMessage().setVisible(true);
@@ -93,10 +93,10 @@ public abstract class FunctionalityBuilder {
             }
         });
         app.getGameEnterButtons().get("signUp").setOnAction(event -> {
-            String username = app.getInputFields().get("username").getText();
-            String password = app.getInputFields().get("signUpPassword").getText();
-            String email = app.getInputFields().get("email").getText();
-            String petName = app.getInputFields().get("petName").getText();
+            String username = app.getInputFields().get("username").getText().toUpperCase();
+            String password = app.getInputFields().get("signUpPassword").getText().toUpperCase();
+            String email = app.getInputFields().get("email").getText().toUpperCase();
+            String petName = app.getInputFields().get("petName").getText().toUpperCase();
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || petName.isEmpty()) {
                 app.getSignUpErrorMessage().setText("All fields must be filled");
                 app.getSignUpErrorMessage().setVisible(true);
