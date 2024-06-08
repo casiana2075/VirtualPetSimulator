@@ -191,18 +191,48 @@ public abstract class FunctionalityBuilder {
                 app.getSounds().get(buttonName).play();
                 ProgressBar statBar = app.getProgressBars().get(buttonToStat.get(buttonName));
                 if (statBar.getProgress() < 1.0) {
-                    statBar.setProgress(Math.min(statBar.getProgress() + 0.3, 1));
-                    Result<Integer> scoreDifference = ServiceCaller.updatePetStat(app.getPet().getId(),
-                            buttonToStat.get(buttonName),
-                            (int) (statBar.getProgress() * 100));
-                    if (scoreDifference.isSuccess()) {
-                        app.getUser().setScore(app.getUser().getScore() + scoreDifference.getData());
+                    int scoreDifference = updatePetStat(app, buttonName);
+                    if (scoreDifference != 0) {
+                        app.getUser().setScore(app.getUser().getScore() + scoreDifference);
                         app.getGameAreaLabels().get("score").setText("Score: " + app.getUser().getScore());
-                    } else {
-                        System.out.println("An error occurred while updating your pet's stats: " + scoreDifference.getError());
                     }
                 }
             });
+        }
+    }
+
+    private static int updatePetStat(ClientApplication app, String buttonClicked) {
+        switch (buttonClicked) {
+            case "feed" -> {
+                int oldHunger = (int) (app.getProgressBars().get("hunger").getProgress() * 100);
+                app.getProgressBars().get("hunger").setProgress(
+                        Math.min(1.0, app.getProgressBars().get("hunger").getProgress() + 0.3));
+                int newHunger = (int) (app.getProgressBars().get("hunger").getProgress() * 100);
+                app.getProgressBars().get("cleanness").setProgress(
+                        app.getProgressBars().get("cleanness").getProgress() - 0.1);
+                return newHunger - oldHunger;
+            }
+            case "wash" -> {
+                int oldCleanness = (int) (app.getProgressBars().get("cleanness").getProgress() * 100);
+                app.getProgressBars().get("cleanness").setProgress(
+                        Math.min(1.0, app.getProgressBars().get("cleanness").getProgress() + 0.75));
+                int newCleanness = (int) (app.getProgressBars().get("cleanness").getProgress() * 100);
+                app.getProgressBars().get("happiness").setProgress(
+                        app.getProgressBars().get("happiness").getProgress() - 0.1);
+                return newCleanness - oldCleanness;
+            }
+            case "play" -> {
+                int oldHappiness = (int) (app.getProgressBars().get("happiness").getProgress() * 100);
+                app.getProgressBars().get("happiness").setProgress(
+                        Math.min(1.0, app.getProgressBars().get("happiness").getProgress() + 0.3));
+                int newHappiness = (int) (app.getProgressBars().get("happiness").getProgress() * 100);
+                app.getProgressBars().get("cleanness").setProgress(
+                        app.getProgressBars().get("cleanness").getProgress() - 0.1);
+                return newHappiness - oldHappiness;
+            }
+            default -> {
+                return 0;
+            }
         }
     }
 
