@@ -17,7 +17,7 @@ public class UsersService {
             User newUser = usersRepository.save(user);
             return Result.success(newUser);
         } catch (Exception e) {
-            return Result.failure("A user with that username or email already exists");
+            return Result.failure("A user with that username or email already exists.");
         }
     }
 
@@ -30,7 +30,7 @@ public class UsersService {
         if (user != null) {
             return Result.success(user);
         }
-        return Result.failure("User not found");
+        return Result.failure("We don't know any pet owner with that username or email.");
     }
 
     public Result<User> findById(int id) {
@@ -38,7 +38,7 @@ public class UsersService {
         if (user != null) {
             return Result.success(user);
         }
-        return Result.failure("User not found");
+        return Result.failure("We don't know the pet owner you're referring to.");
     }
 
     public User updateScore(int userId, int score) {

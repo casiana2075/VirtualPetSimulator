@@ -62,65 +62,69 @@ public abstract class FunctionalityBuilder {
         });
 
         app.getGameEnterButtons().get("logIn").setOnAction(event -> {
+            app.getLoginErrorMessage().setVisible(false);
             String identifier = app.getInputFields().get("identifier").getText().toUpperCase();
             String password = app.getInputFields().get("logInPassword").getText().toUpperCase();
             if(identifier.isEmpty() || password.isEmpty()){
                 app.getLoginErrorMessage().setText("Write your username and password first");
                 app.getLoginErrorMessage().setVisible(true);
-            }else{
+            } else {
                 Result<User> loginResult = ServiceCaller.logIn(identifier, password);
                 if (loginResult.isSuccess()) {
                     handleSuccessfulUserFetching(app, loginResult.getData());
                     Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
-                    app.getLoginErrorMessage().setVisible(false);
                     if (petResult.isSuccess()) {
                         handleSuccessfulPetFetching(app, primaryStage, petResult.getData());
                         Result<Integer> updatedScore = ServiceCaller.getScore(app.getUser().getId());
                         if (updatedScore.isSuccess()) {
+                            app.getLoginErrorMessage().setVisible(false);
                             app.getUser().setScore(updatedScore.getData());
                             app.getGameAreaLabels().get("score").setText("Score: " + app.getUser().getScore());
                         } else {
-                            System.out.println("An error occurred while updating your score: " + updatedScore.getError());
+                            app.getLoginErrorMessage().setText(updatedScore.getError());
+                            app.getLoginErrorMessage().setVisible(true);
                         }
                     } else {
-                        System.out.println("An error occurred while retrieving your adorable pet: " + petResult.getError());
+                        app.getLoginErrorMessage().setText(petResult.getError());
+                        app.getLoginErrorMessage().setVisible(true);
                     }
                 } else {
                     app.getLoginErrorMessage().setText(loginResult.getError());
                     app.getLoginErrorMessage().setVisible(true);
-                    System.out.println("An error occurred while logging in: " + loginResult.getError());
                 }
             }
         });
+
         app.getGameEnterButtons().get("signUp").setOnAction(event -> {
+            app.getSignUpErrorMessage().setVisible(false);
             String username = app.getInputFields().get("username").getText().toUpperCase();
             String password = app.getInputFields().get("signUpPassword").getText().toUpperCase();
             String email = app.getInputFields().get("email").getText().toUpperCase();
             String petName = app.getInputFields().get("petName").getText().toUpperCase();
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || petName.isEmpty()) {
-                app.getSignUpErrorMessage().setText("All fields must be filled");
+                app.getSignUpErrorMessage().setText("All fields must be filled.");
                 app.getSignUpErrorMessage().setVisible(true);
             } else if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                app.getSignUpErrorMessage().setText("Invalid email format");
+                app.getSignUpErrorMessage().setText("Invalid email format.");
                 app.getSignUpErrorMessage().setVisible(true);
             } else {
                 Result<User> registerResult = ServiceCaller.signUp(username, email, password, petName);
-                app.getSignUpErrorMessage().setVisible(false);
                 if (registerResult.isSuccess()) {
-                handleSuccessfulUserFetching(app, registerResult.getData());
-                Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
+                    handleSuccessfulUserFetching(app, registerResult.getData());
+                    Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
                     if (petResult.isSuccess()) {
-                    handleSuccessfulPetFetching(app, primaryStage, petResult.getData());
+                        handleSuccessfulPetFetching(app, primaryStage, petResult.getData());
                     } else {
-                        System.out.println("An error occurred while retrieving your adorable pet: " + petResult.getError());
+                        app.getSignUpErrorMessage().setText(petResult.getError());
+                        app.getSignUpErrorMessage().setVisible(true);
                     }
                 } else {
                     app.getSignUpErrorMessage().setText(registerResult.getError());
                     app.getSignUpErrorMessage().setVisible(true);
-                    System.out.println("An error occurred while creating your account: " + registerResult.getError());
                 }
             }
         });
+
         app.getGameEnterButtons().get("homeExit").setOnAction(event -> {
             Platform.exit();
         });

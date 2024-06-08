@@ -41,7 +41,7 @@ public class UsersController {
             petsService.findByOwnerId(user.getData().getId());
             return user;
         } else {
-            return Result.failure("Invalid username or password");
+            return Result.failure("Invalid username or password.");
         }
     }
 
@@ -51,6 +51,6 @@ public class UsersController {
         if (user.isSuccess()) {
             return Result.success(user.getData().getScore());
         }
-        return Result.failure("User not found");
+        return Result.failure("We couldn't find the score you're looking for.");
     }
 }
