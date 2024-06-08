@@ -38,9 +38,10 @@ public class PetsService {
         if (pet == null) {
             return Result.failure("Terrible! We couldn't find your pet. Please try again.");
         }
-        int scoreDecrease = pet.applyStatsDecrease(getStatsDifference(pet));
-        usersService.updateScore(pet.getOwnerId(), -scoreDecrease);
-        petsRepository.save(pet);
+        Integer[] statsDecrease = getStatsDifference(pet);
+        int scoreDecrease = pet.applyStatsDecrease(statsDecrease);
+        usersService.updateScoreUponLogIn(pet.getOwnerId(), scoreDecrease);
+        updatePetUponLogIn(pet, statsDecrease);
         return Result.success(pet);
     }
 
@@ -56,45 +57,25 @@ public class PetsService {
         return new Integer[]{hungerDifference, happinessDifference, cleannessDifference};
     }
 
-    public Result<Void> save(int petId, int currentHunger, int currentHappiness, int currentCleanness) {
-        Result<Pet> petResult = findById(petId);
-        if (!petResult.isSuccess()) {
-            return Result.failure(petResult.getError());
+    private void updatePetUponLogIn(Pet pet, Integer[] statsDifference) {
+        pet.setHunger(Math.max(0, pet.getHunger() - statsDifference[0]));
+        pet.setHappiness(Math.max(0, pet.getHappiness() - statsDifference[1]));
+        pet.setCleanness(Math.max(0, pet.getCleanness() - statsDifference[2]));
+        pet.setLastUpdate(LocalDateTime.now());
+        petsRepository.save(pet);
+    }
+
+    public Result<Void> save(int petId, int currentHunger, int currentHappiness, int currentCleanness, int currentScore) {
+        Pet pet = petsRepository.findById(petId).orElse(null);
+        if (pet == null) {
+            return Result.failure("Terrible! We couldn't find your pet. Please try again.");
         }
-        Pet pet = petResult.getData();
         pet.setHunger(currentHunger);
         pet.setHappiness(currentHappiness);
         pet.setCleanness(currentCleanness);
         pet.setLastUpdate(LocalDateTime.now());
         petsRepository.save(pet);
-
+        usersService.updateScore(pet.getOwnerId(), currentScore);
         return Result.success(null);
-    }
-
-    public Result<Integer> update(int petId, String stat, int value) {
-        Result<Pet> petResult = findById(petId);
-        if (!petResult.isSuccess()) {
-            return Result.failure(petResult.getError());
-        }
-        Pet pet = petResult.getData();
-        int scoreDifference = 0;
-        switch (stat) {
-            case "hunger":
-                scoreDifference = value - pet.getHunger();
-                pet.setHunger(value);
-                break;
-            case "happiness":
-                scoreDifference = value - pet.getHappiness();
-                pet.setHappiness(value);
-                break;
-            case "cleanness":
-                scoreDifference = value - pet.getCleanness();
-                pet.setCleanness(value);
-                break;
-        }
-        usersService.updateScore(pet.getOwnerId(), scoreDifference);
-        pet.setLastUpdate(LocalDateTime.now());
-        petsRepository.save(pet);
-        return Result.success(scoreDifference);
     }
 }

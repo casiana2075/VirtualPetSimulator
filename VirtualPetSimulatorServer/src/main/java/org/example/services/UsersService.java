@@ -41,13 +41,22 @@ public class UsersService {
         return Result.failure("We don't know the pet owner you're referring to.");
     }
 
-    public User updateScore(int userId, int score) {
+    public void updateScore(int userId, int score) {
         User user = usersRepository.findById(userId).orElse(null);
         if (user == null) {
-            return null;
+            return;
+        }
+        user.setScore(score);
+        usersRepository.save(user);
+    }
+
+    public void updateScoreUponLogIn(int userId, int score) {
+        User user = usersRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return;
         }
         user.setScore(user.getScore() + score);
-        return usersRepository.save(user);
+        usersRepository.save(user);
     }
 
     public void deleteById(int id) {

@@ -152,10 +152,12 @@ public abstract class FunctionalityBuilder {
         Media byeCatSound = new Media(ClientApplication.class.getResource("/Sounds/byeCatSound.mp3").toString());
         MediaPlayer byeCatMediaPlayer = new MediaPlayer(byeCatSound);
         app.getGameQuitButtons().get("exit").setOnAction(event -> {
+            System.out.println("Score: " + app.getUser().getScore());
             Result<Void> saveResult = ServiceCaller.savePet(app.getPet().getId(),
                     (int) (app.getProgressBars().get("hunger").getProgress() * 100),
                     (int) (app.getProgressBars().get("happiness").getProgress() * 100),
-                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100));
+                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100),
+                    app.getUser().getScore());
             if (saveResult.isSuccess()) {
                 Platform.exit();
             } else {
@@ -164,10 +166,12 @@ public abstract class FunctionalityBuilder {
         });
         app.getGameQuitButtons().get("logout").setOnAction(event -> {
             byeCatMediaPlayer.play();
+            System.out.println("Score: " + app.getUser().getScore());
             Result<Void> saveResult = ServiceCaller.savePet(app.getPet().getId(),
                     (int) (app.getProgressBars().get("hunger").getProgress() * 100),
                     (int) (app.getProgressBars().get("happiness").getProgress() * 100),
-                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100));
+                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100),
+                    app.getUser().getScore());
             if (saveResult.isSuccess()) {
                 primaryStage.setScene(app.getScenes().get("logIn"));
                 primaryStage.setTitle("Welcome to Virtual Pet Simulator! Please Login...");
