@@ -17,7 +17,7 @@ public class UsersService {
             User newUser = usersRepository.save(user);
             return Result.success(newUser);
         } catch (Exception e) {
-            return Result.failure("DuplicateUsernameOrEmail");
+            return Result.failure("A user with that username or email already exists.");
         }
     }
 
@@ -30,7 +30,7 @@ public class UsersService {
         if (user != null) {
             return Result.success(user);
         }
-        return Result.failure("UserNotFound");
+        return Result.failure("We don't know any pet owner with that username or email.");
     }
 
     public Result<User> findById(int id) {
@@ -38,16 +38,25 @@ public class UsersService {
         if (user != null) {
             return Result.success(user);
         }
-        return Result.failure("UserNotFound");
+        return Result.failure("We don't know the pet owner you're referring to.");
     }
 
-    public User updateScore(int userId, int score) {
+    public void updateScore(int userId, int score) {
         User user = usersRepository.findById(userId).orElse(null);
         if (user == null) {
-            return null;
+            return;
+        }
+        user.setScore(score);
+        usersRepository.save(user);
+    }
+
+    public void updateScoreUponLogIn(int userId, int score) {
+        User user = usersRepository.findById(userId).orElse(null);
+        if (user == null) {
+            return;
         }
         user.setScore(user.getScore() + score);
-        return usersRepository.save(user);
+        usersRepository.save(user);
     }
 
     public void deleteById(int id) {

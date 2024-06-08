@@ -22,14 +22,8 @@ public class PetsController {
     public @ResponseBody Result<Void> save(@RequestParam int petId,
                             @RequestParam int currentHunger,
                             @RequestParam int currentHappiness,
-                            @RequestParam int currentCleanness) {
-        return petsService.save(petId, currentHunger, currentHappiness, currentCleanness);
-    }
-
-    @PatchMapping("/update")
-    public @ResponseBody Result<Integer> update(@RequestParam int petId,
-                            @RequestParam String stat,
-                            @RequestParam int value) {
-        return petsService.update(petId, stat, value);
+                            @RequestParam int currentCleanness,
+                            @RequestParam int currentScore) {
+        return petsService.save(petId, currentHunger, currentHappiness, currentCleanness, currentScore);
     }
 }

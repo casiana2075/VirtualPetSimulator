@@ -55,32 +55,18 @@ public abstract class ServiceCaller {
     }
 
     @PatchMapping
-    public static Result<Void> savePet(int petId, int currentHunger, int currentHappiness, int currentCleanness) {
+    public static Result<Void> savePet(int petId, int currentHunger, int currentHappiness, int currentCleanness, int currentScore) {
         String requestUri = petsUri + "/save?"
                 + "petId=" + petId + "&"
                 + "currentHunger=" + currentHunger + "&"
                 + "currentHappiness=" + currentHappiness + "&"
-                + "currentCleanness=" + currentCleanness;
+                + "currentCleanness=" + currentCleanness + "&"
+                + "currentScore=" + currentScore;
         return WebClient.create()
                 .patch()
                 .uri(requestUri)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Result<Void>>() {
-                })
-                .block();
-    }
-
-    @PatchMapping
-    public static Result<Integer> updatePetStat(int petId, String stat, int value) {
-        String requestUri = petsUri + "/update?"
-                + "petId=" + petId + "&"
-                + "stat=" + stat + "&"
-                + "value=" + value;
-        return WebClient.create()
-                .patch()
-                .uri(requestUri)
-                .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<Result<Integer>>() {
                 })
                 .block();
     }

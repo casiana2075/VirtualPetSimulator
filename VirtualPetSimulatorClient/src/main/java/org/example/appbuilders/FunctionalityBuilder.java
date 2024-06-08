@@ -1,7 +1,6 @@
 package org.example.appbuilders;
 
 import javafx.application.Platform;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import org.example.ClientApplication;
@@ -9,9 +8,10 @@ import org.example.Result;
 import org.example.ServiceCaller;
 import org.example.entities.Pet;
 import org.example.entities.User;
-
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
 public abstract class FunctionalityBuilder {
     private static final Map<String, String> buttonToAnimation = new HashMap<>() {{
@@ -62,81 +62,72 @@ public abstract class FunctionalityBuilder {
         });
 
         app.getGameEnterButtons().get("logIn").setOnAction(event -> {
-            String identifier = app.getInputFields().get("identifier").getText();
-            String password = app.getInputFields().get("logInPassword").getText();
+            app.getLoginErrorMessage().setVisible(false);
+            String identifier = app.getInputFields().get("identifier").getText().toUpperCase();
+            String password = app.getInputFields().get("logInPassword").getText().toUpperCase();
             if(identifier.isEmpty() || password.isEmpty()){
                 app.getLoginErrorMessage().setText("Write your username and password first");
                 app.getLoginErrorMessage().setVisible(true);
-            }else{
+            } else {
                 Result<User> loginResult = ServiceCaller.logIn(identifier, password);
                 if (loginResult.isSuccess()) {
                     handleSuccessfulUserFetching(app, loginResult.getData());
                     Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
-                    app.getLoginErrorMessage().setVisible(false);
                     if (petResult.isSuccess()) {
                         handleSuccessfulPetFetching(app, primaryStage, petResult.getData());
                         Result<Integer> updatedScore = ServiceCaller.getScore(app.getUser().getId());
                         if (updatedScore.isSuccess()) {
+                            app.getLoginErrorMessage().setVisible(false);
                             app.getUser().setScore(updatedScore.getData());
                             app.getGameAreaLabels().get("score").setText("Score: " + app.getUser().getScore());
                         } else {
-                            System.out.println("An error occurred while updating your score: " + updatedScore.getError());
+                            app.getLoginErrorMessage().setText(updatedScore.getError());
+                            app.getLoginErrorMessage().setVisible(true);
                         }
                     } else {
-                        System.out.println("An error occurred while retrieving your adorable pet: " + petResult.getError());
+                        app.getLoginErrorMessage().setText(petResult.getError());
+                        app.getLoginErrorMessage().setVisible(true);
                     }
                 } else {
-                    String loginErrorMessage = camelCaseToSentence(loginResult.getError());
-                    app.getLoginErrorMessage().setText(loginErrorMessage);
+                    app.getLoginErrorMessage().setText(loginResult.getError());
                     app.getLoginErrorMessage().setVisible(true);
-                    System.out.println("An error occurred while logging in: " + loginResult.getError());
                 }
             }
         });
+
         app.getGameEnterButtons().get("signUp").setOnAction(event -> {
-            String username = app.getInputFields().get("username").getText();
-            String password = app.getInputFields().get("signUpPassword").getText();
-            String email = app.getInputFields().get("email").getText();
-            String petName = app.getInputFields().get("petName").getText();
+            app.getSignUpErrorMessage().setVisible(false);
+            String username = app.getInputFields().get("username").getText().toUpperCase();
+            String password = app.getInputFields().get("signUpPassword").getText().toUpperCase();
+            String email = app.getInputFields().get("email").getText().toUpperCase();
+            String petName = app.getInputFields().get("petName").getText().toUpperCase();
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || petName.isEmpty()) {
-                app.getSignUpErrorMessage().setText("All fields must be filled");
+                app.getSignUpErrorMessage().setText("All fields must be filled.");
                 app.getSignUpErrorMessage().setVisible(true);
             } else if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-                app.getSignUpErrorMessage().setText("Invalid email format");
+                app.getSignUpErrorMessage().setText("Invalid email format.");
                 app.getSignUpErrorMessage().setVisible(true);
             } else {
                 Result<User> registerResult = ServiceCaller.signUp(username, email, password, petName);
-                app.getSignUpErrorMessage().setVisible(false);
                 if (registerResult.isSuccess()) {
-                handleSuccessfulUserFetching(app, registerResult.getData());
-                Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
+                    handleSuccessfulUserFetching(app, registerResult.getData());
+                    Result<Pet> petResult = ServiceCaller.getPet(app.getUser().getId());
                     if (petResult.isSuccess()) {
-                    handleSuccessfulPetFetching(app, primaryStage, petResult.getData());
+                        handleSuccessfulPetFetching(app, primaryStage, petResult.getData());
                     } else {
-                        System.out.println("An error occurred while retrieving your adorable pet: " + petResult.getError());
+                        app.getSignUpErrorMessage().setText(petResult.getError());
+                        app.getSignUpErrorMessage().setVisible(true);
                     }
                 } else {
-                    String registerErrorMessage = camelCaseToSentence(registerResult.getError());
-                    app.getSignUpErrorMessage().setText(registerErrorMessage);
+                    app.getSignUpErrorMessage().setText(registerResult.getError());
                     app.getSignUpErrorMessage().setVisible(true);
-                    System.out.println("An error occurred while creating your account: " + registerResult.getError());
                 }
             }
         });
+
         app.getGameEnterButtons().get("homeExit").setOnAction(event -> {
             Platform.exit();
         });
-    }
-
-    public static String camelCaseToSentence(String camelCase) {
-        StringBuilder result = new StringBuilder();
-        for (char c : camelCase.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                result.append(" ");
-            }
-            result.append(c);
-        }
-        return result.toString();
     }
 
     private static void handleSuccessfulUserFetching(ClientApplication app, User user) {
@@ -148,6 +139,7 @@ public abstract class FunctionalityBuilder {
         app.setPet(pet);
         primaryStage.setScene(app.getScenes().get("game"));
         primaryStage.setTitle("Virtual Pet Game");
+        app.getGameAreaLabels().get("autosaving").setVisible(false);
         app.getProgressBars().get("happiness").setProgress((double) pet.getHappiness() / 100);
         app.getProgressBars().get("hunger").setProgress((double) pet.getHunger() / 100);
         app.getProgressBars().get("cleanness").setProgress((double) pet.getCleanness() / 100);
@@ -158,11 +150,15 @@ public abstract class FunctionalityBuilder {
     }
 
     private static void addFunctionalityToGameQuitButtons(ClientApplication app, Stage primaryStage) {
+        Media byeCatSound = new Media(ClientApplication.class.getResource("/Sounds/byeCatSound.mp3").toString());
+        MediaPlayer byeCatMediaPlayer = new MediaPlayer(byeCatSound);
         app.getGameQuitButtons().get("exit").setOnAction(event -> {
+            System.out.println("Score: " + app.getUser().getScore());
             Result<Void> saveResult = ServiceCaller.savePet(app.getPet().getId(),
                     (int) (app.getProgressBars().get("hunger").getProgress() * 100),
                     (int) (app.getProgressBars().get("happiness").getProgress() * 100),
-                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100));
+                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100),
+                    app.getUser().getScore());
             if (saveResult.isSuccess()) {
                 Platform.exit();
             } else {
@@ -170,10 +166,13 @@ public abstract class FunctionalityBuilder {
             }
         });
         app.getGameQuitButtons().get("logout").setOnAction(event -> {
+            byeCatMediaPlayer.play();
+            System.out.println("Score: " + app.getUser().getScore());
             Result<Void> saveResult = ServiceCaller.savePet(app.getPet().getId(),
                     (int) (app.getProgressBars().get("hunger").getProgress() * 100),
                     (int) (app.getProgressBars().get("happiness").getProgress() * 100),
-                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100));
+                    (int) (app.getProgressBars().get("cleanness").getProgress() * 100),
+                    app.getUser().getScore());
             if (saveResult.isSuccess()) {
                 primaryStage.setScene(app.getScenes().get("logIn"));
                 primaryStage.setTitle("Welcome to Virtual Pet Simulator! Please Login...");
@@ -194,20 +193,54 @@ public abstract class FunctionalityBuilder {
                 setAllGameSceneButtonsState(app, true);
                 app.getCatAnimations().get("idle").pause();
                 app.getCatAnimations().get(buttonToAnimation.get(buttonName)).play();
+                app.getSounds().get(buttonName).play();
                 ProgressBar statBar = app.getProgressBars().get(buttonToStat.get(buttonName));
                 if (statBar.getProgress() < 1.0) {
-                    statBar.setProgress(Math.min(statBar.getProgress() + 0.3, 1));
-                    Result<Integer> scoreDifference = ServiceCaller.updatePetStat(app.getPet().getId(),
-                            buttonToStat.get(buttonName),
-                            (int) (statBar.getProgress() * 100));
-                    if (scoreDifference.isSuccess()) {
-                        app.getUser().setScore(app.getUser().getScore() + scoreDifference.getData());
+                    int scoreDifference = updatePetStat(app, buttonName);
+                    if (scoreDifference != 0) {
+                        app.getUser().setScore(app.getUser().getScore() + scoreDifference);
                         app.getGameAreaLabels().get("score").setText("Score: " + app.getUser().getScore());
-                    } else {
-                        System.out.println("An error occurred while updating your pet's stats: " + scoreDifference.getError());
                     }
                 }
             });
+        }
+    }
+
+    private static int updatePetStat(ClientApplication app, String buttonClicked) {
+        switch (buttonClicked) {
+            case "feed" -> {
+                int oldHunger = (int) (app.getProgressBars().get("hunger").getProgress() * 100);
+                app.getProgressBars().get("hunger").setProgress(
+                        Math.min(1.0, app.getProgressBars().get("hunger").getProgress() + 0.3));
+                int newHunger = (int) (app.getProgressBars().get("hunger").getProgress() * 100);
+                app.getPet().setHunger(newHunger);
+                app.getProgressBars().get("cleanness").setProgress(
+                        app.getProgressBars().get("cleanness").getProgress() - 0.1);
+                return newHunger - oldHunger;
+            }
+            case "wash" -> {
+                int oldCleanness = (int) (app.getProgressBars().get("cleanness").getProgress() * 100);
+                app.getProgressBars().get("cleanness").setProgress(
+                        Math.min(1.0, app.getProgressBars().get("cleanness").getProgress() + 0.75));
+                int newCleanness = (int) (app.getProgressBars().get("cleanness").getProgress() * 100);
+                app.getPet().setCleanness(newCleanness);
+                app.getProgressBars().get("happiness").setProgress(
+                        app.getProgressBars().get("happiness").getProgress() - 0.1);
+                return newCleanness - oldCleanness;
+            }
+            case "play" -> {
+                int oldHappiness = (int) (app.getProgressBars().get("happiness").getProgress() * 100);
+                app.getProgressBars().get("happiness").setProgress(
+                        Math.min(1.0, app.getProgressBars().get("happiness").getProgress() + 0.3));
+                int newHappiness = (int) (app.getProgressBars().get("happiness").getProgress() * 100);
+                app.getPet().setHappiness(newHappiness);
+                app.getProgressBars().get("cleanness").setProgress(
+                        app.getProgressBars().get("cleanness").getProgress() - 0.1);
+                return newHappiness - oldHappiness;
+            }
+            default -> {
+                return 0;
+            }
         }
     }
 
@@ -218,6 +251,9 @@ public abstract class FunctionalityBuilder {
                 app.getCatAnimations().get("idle").play();
                 setAllGameSceneButtonsState(app, false);
             });
+        }
+        for (MediaPlayer sound : app.getSounds().values()) {
+            sound.setOnEndOfMedia(sound::stop);
         }
     }
 

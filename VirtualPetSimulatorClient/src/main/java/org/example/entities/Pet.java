@@ -19,25 +19,4 @@ public final class Pet {
     private Integer happiness;
 
     private Integer cleanness;
-
-    public int applyStatsDecrease(Integer[] statsDifference) {
-        int scoreDifference = 0;
-        hunger -= statsDifference[0];
-        if (hunger < 0) {
-            scoreDifference += hunger;
-            hunger = 0;
-        }
-        happiness -= statsDifference[1];
-        if (happiness < 0) {
-            scoreDifference += happiness;
-            happiness = 0;
-        }
-        cleanness -= statsDifference[2];
-        if (cleanness < 0) {
-            scoreDifference += cleanness;
-            cleanness = 0;
-        }
-
-        return scoreDifference;
-    }
 }

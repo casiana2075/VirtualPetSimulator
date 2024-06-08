@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -36,9 +37,22 @@ public class ClientApplication extends Application {
     private Map<String, Button> gameEnterButtons;
     private Map<String, Pane> boxes;
     private Map<String, Scene> scenes;
+    private Map<String, MediaPlayer> sounds;
 
     private User user = new User();
     private Pet pet = new Pet();
+
+    public synchronized User getCurrentUser() {
+        return user;
+    }
+
+    public synchronized Pet getCurrentPet() {
+        return pet;
+    }
+
+    public synchronized Label getAutosavingLabel() {
+        return gameAreaLabels.get("autosaving");
+    }
 
     private void buildUserInterface() {
         UserInterfaceBuilder.createStatsImageViews(this);
@@ -56,6 +70,7 @@ public class ClientApplication extends Application {
         UserInterfaceBuilder.createGameEnterButtons(this);
         UserInterfaceBuilder.createBoxes(this);
         UserInterfaceBuilder.buildScenes(this);
+        UserInterfaceBuilder.loadSoundEffects(this);
     }
 
     private void addFunctionality(Stage primaryStage) {
@@ -72,11 +87,18 @@ public class ClientApplication extends Application {
         primaryStage.show();
     }
 
+    private void startAutosaver() {
+        Thread autosaverThread = new Thread(new Autosaver(this, 3));
+        autosaverThread.setDaemon(true);
+        autosaverThread.start();
+    }
+
     @Override
     public void start(Stage primaryStage) {
         buildUserInterface();
         addFunctionality(primaryStage);
         launchHomeScene(primaryStage);
+        startAutosaver();
     }
 
     public static void main(String[] args) {

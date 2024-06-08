@@ -13,6 +13,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.util.Duration;
@@ -77,12 +79,15 @@ public abstract class UserInterfaceBuilder {
             double cleanness = app.getProgressBars().get("cleanness").getProgress();
             if (happiness > 0) {
                 app.getProgressBars().get("happiness").setProgress(happiness - 0.05);
+                app.getPet().setHappiness((int) (happiness * 100) - 5);
             }
             if (hunger > 0) {
                 app.getProgressBars().get("hunger").setProgress(hunger - 0.1);
+                app.getPet().setHunger((int) (hunger * 100) - 10);
             }
             if (cleanness > 0) {
                 app.getProgressBars().get("cleanness").setProgress(cleanness - 0.01);
+                app.getPet().setCleanness((int) (cleanness * 100) - 1);
             }
         }));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -98,12 +103,18 @@ public abstract class UserInterfaceBuilder {
 
     public static void createGameAreaLabels(ClientApplication app) {
         Map<String, Label> gameAreaLabels = new HashMap<>();
+        Label autosavingLabel = new Label("Autosaving...");
+        autosavingLabel.setFont(app.getFont());
+        gameAreaLabels.put("autosaving", autosavingLabel);
+
         Label nameLabel = new Label("Name: " + app.getPet().getName());
         nameLabel.setFont(app.getFont());
         gameAreaLabels.put("name", nameLabel);
-        Label hungerLabel = new Label("Score: " + app.getUser().getScore());
-        hungerLabel.setFont(app.getFont());
-        gameAreaLabels.put("score", hungerLabel);
+
+        Label scoreLabel = new Label("Score: " + app.getUser().getScore());
+        scoreLabel.setFont(app.getFont());
+        gameAreaLabels.put("score", scoreLabel);
+
         app.setGameAreaLabels(gameAreaLabels);
     }
 
@@ -347,14 +358,14 @@ public abstract class UserInterfaceBuilder {
         boxes.put("stats", statsBox);
 
         HBox userInfoBox = new HBox();
-        userInfoBox.getChildren().addAll(app.getGameAreaLabels().get("name"),
+        userInfoBox.getChildren().addAll(app.getGameAreaLabels().get("autosaving"),
+                app.getGameAreaLabels().get("name"),
                 app.getGameAreaLabels().get("score"));
         userInfoBox.setAlignment(Pos.CENTER);
         userInfoBox.setSpacing(300);
         userInfoBox.setPadding(new Insets(10, 0, 0, 0));
         userInfoBox.setStyle("-fx-background-color: #A9A9A9;");
         boxes.put("nameAndScore", userInfoBox);
-
         VBox centerCatBox = new VBox();
         centerCatBox.setAlignment(Pos.CENTER);
         centerCatBox.setStyle("-fx-background-color: #A9A9A9;");
@@ -402,5 +413,25 @@ public abstract class UserInterfaceBuilder {
         scenes.put("home", new Scene(app.getBoxes().get("home"), width, height));
         scenes.put("game", new Scene(app.getBoxes().get("game"), width, height));
         app.setScenes(scenes);
+    }
+
+    public static void loadSoundEffects(ClientApplication app) {
+        Map<String, MediaPlayer> sounds = new HashMap<>();
+        Media playSound = new Media(app
+                .getClass()
+                .getResource("/Sounds/happySound.mp3")
+                .toString());
+        Media feedSound = new Media(app
+                .getClass()
+                .getResource("/Sounds/eatingSound.mp3")
+                .toString());
+        Media washSound = new Media(app
+                .getClass()
+                .getResource("/Sounds/bubbleBathSound.mp3")
+                .toString());
+        sounds.put("play", new MediaPlayer(playSound));
+        sounds.put("feed", new MediaPlayer(feedSound));
+        sounds.put("wash", new MediaPlayer(washSound));
+        app.setSounds(sounds);
     }
 }
