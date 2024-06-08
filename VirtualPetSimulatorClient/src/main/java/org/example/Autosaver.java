@@ -18,7 +18,7 @@ public final class Autosaver implements Runnable {
         Pet currentPet;
         while (true) {
             try {
-                Thread.sleep(5000);
+                Thread.sleep(timeInterval);
                 synchronized (app) {
                     currentUser = app.getCurrentUser();
                     currentPet = app.getCurrentPet();
