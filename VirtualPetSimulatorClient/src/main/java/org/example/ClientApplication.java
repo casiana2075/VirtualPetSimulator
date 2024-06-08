@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import lombok.Getter;
@@ -36,6 +37,7 @@ public class ClientApplication extends Application {
     private Map<String, Button> gameEnterButtons;
     private Map<String, Pane> boxes;
     private Map<String, Scene> scenes;
+    private Map<String, MediaPlayer> sounds;
 
     private User user = new User();
     private Pet pet = new Pet();
@@ -56,6 +58,7 @@ public class ClientApplication extends Application {
         UserInterfaceBuilder.createGameEnterButtons(this);
         UserInterfaceBuilder.createBoxes(this);
         UserInterfaceBuilder.buildScenes(this);
+        UserInterfaceBuilder.loadSoundEffects(this);
     }
 
     private void addFunctionality(Stage primaryStage) {

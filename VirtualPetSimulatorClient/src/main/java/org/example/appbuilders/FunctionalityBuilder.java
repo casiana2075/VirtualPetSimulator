@@ -179,17 +179,12 @@ public abstract class FunctionalityBuilder {
     }
 
     private static void addFunctionalityToPetInteractionButtons(ClientApplication app) {
-        Media playSound = new Media(ClientApplication.class.getResource("/Sounds/happySound.mp3").toString());
-        Media feedSound = new Media(ClientApplication.class.getResource("/Sounds/eatingSound.mp3").toString());
-        Media washSound = new Media(ClientApplication.class.getResource("/Sounds/bubbleBathSound.mp3").toString());
-        MediaPlayer playMediaPlayer = new MediaPlayer(playSound);
-        MediaPlayer feedMediaPlayer = new MediaPlayer(feedSound);
-        MediaPlayer washMediaPlayer = new MediaPlayer(washSound);
         for (String buttonName : app.getPetInteractionButtons().keySet()) {
             app.getPetInteractionButtons().get(buttonName).setOnAction(event -> {
                 setAllGameSceneButtonsState(app, true);
                 app.getCatAnimations().get("idle").pause();
                 app.getCatAnimations().get(buttonToAnimation.get(buttonName)).play();
+                app.getSounds().get(buttonName).play();
                 ProgressBar statBar = app.getProgressBars().get(buttonToStat.get(buttonName));
                 if (statBar.getProgress() < 1.0) {
                     statBar.setProgress(Math.min(statBar.getProgress() + 0.3, 1));
@@ -203,13 +198,6 @@ public abstract class FunctionalityBuilder {
                         System.out.println("An error occurred while updating your pet's stats: " + scoreDifference.getError());
                     }
                 }
-                if (buttonName.equals("play")) {
-                    playMediaPlayer.play();
-                } else if (buttonName.equals("feed")) {
-                    feedMediaPlayer.play();
-                } else if (buttonName.equals("wash")) {
-                    washMediaPlayer.play();
-                }
             });
         }
     }
@@ -221,6 +209,9 @@ public abstract class FunctionalityBuilder {
                 app.getCatAnimations().get("idle").play();
                 setAllGameSceneButtonsState(app, false);
             });
+        }
+        for (MediaPlayer sound : app.getSounds().values()) {
+            sound.setOnEndOfMedia(sound::stop);
         }
     }
 

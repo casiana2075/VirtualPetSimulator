@@ -13,6 +13,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.stage.Screen;
 import javafx.util.Duration;
@@ -402,5 +404,25 @@ public abstract class UserInterfaceBuilder {
         scenes.put("home", new Scene(app.getBoxes().get("home"), width, height));
         scenes.put("game", new Scene(app.getBoxes().get("game"), width, height));
         app.setScenes(scenes);
+    }
+
+    public static void loadSoundEffects(ClientApplication app) {
+        Map<String, MediaPlayer> sounds = new HashMap<>();
+        Media playSound = new Media(app
+                .getClass()
+                .getResource("/Sounds/happySound.mp3")
+                .toString());
+        Media feedSound = new Media(app
+                .getClass()
+                .getResource("/Sounds/eatingSound.mp3")
+                .toString());
+        Media washSound = new Media(app
+                .getClass()
+                .getResource("/Sounds/bubbleBathSound.mp3")
+                .toString());
+        sounds.put("play", new MediaPlayer(playSound));
+        sounds.put("feed", new MediaPlayer(feedSound));
+        sounds.put("wash", new MediaPlayer(washSound));
+        app.setSounds(sounds);
     }
 }
