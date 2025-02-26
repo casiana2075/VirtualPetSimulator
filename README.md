@@ -1,7 +1,6 @@
 # 🐾 Virtual Pet Simulator
 
-**Authors:** Butnaru Alexandru, Maxim Casiana  
-**Group:** 2B4
+**Authors:** Butnaru Alexandru, Maxim Casiana 
 
 ## Overview
 
